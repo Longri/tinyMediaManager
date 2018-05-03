@@ -46,7 +46,6 @@ import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import com.badlogic.gdx.Gdx;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.ELProperty;
 import org.slf4j.Logger;
@@ -69,6 +68,8 @@ import org.tinymediamanager.ui.dialogs.MessageDialog;
 import org.tinymediamanager.ui.dialogs.WhatsNewDialog;
 import org.tinymediamanager.ui.wizard.TinyMediaManagerWizard;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 import com.sun.jna.Platform;
 
 import ch.qos.logback.classic.Level;
@@ -77,519 +78,529 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import de.longri.tinymediamanager.ChangedMainWindow;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
-
 /**
  * Created by Longri on 03.05.2018.
  */
 public class Launcher {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TinyMediaManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TinyMediaManager.class);
 
-    static {
-        Gdx.files = new LwjglFiles();
+  static {
+    Gdx.files = new LwjglFiles();
+  }
+
+  /**
+   * The main method.
+   *
+   * @param args the arguments
+   */
+  public static void main(String[] args) {
+    // should we change the log level for the console?
+    setConsoleLogLevel();
+
+    // simple parse command line
+    if (args != null && args.length > 0) {
+      LOGGER.debug("TMM started with: " + Arrays.toString(args));
+      TinyMediaManagerCMD.parseParams(args);
+      System.setProperty("java.awt.headless", "true");
+    }
+    else {
+      // no cmd params found, but if we are headless - display syntax
+      String head = System.getProperty("java.awt.headless");
+      if (head != null && head.equals("true")) {
+        LOGGER.info("TMM started 'headless', and without params -> displaying syntax ");
+        TinyMediaManagerCMD.printSyntax();
+        shutdownLogger();
+        System.exit(0);
+      }
     }
 
+    // check if we have write permissions to this folder
+    try {
+      RandomAccessFile f = new RandomAccessFile("access.test", "rw");
+      f.close();
+      Files.deleteIfExists(Paths.get("access.test"));
+    }
+    catch (Exception e2) {
+      String msg = "Cannot write to TMM directory, have no rights - exiting.";
+      if (!GraphicsEnvironment.isHeadless()) {
+        JOptionPane.showMessageDialog(null, msg);
+      }
+      else {
+        System.out.println(msg);
+      }
+      shutdownLogger();
+      System.exit(1);
+    }
 
-    /**
-     * The main method.
-     *
-     * @param args the arguments
-     */
-    public static void main(String[] args) {
-        // should we change the log level for the console?
-        setConsoleLogLevel();
-
-        // simple parse command line
-        if (args != null && args.length > 0) {
-            LOGGER.debug("TMM started with: " + Arrays.toString(args));
-            TinyMediaManagerCMD.parseParams(args);
-            System.setProperty("java.awt.headless", "true");
-        } else {
-            // no cmd params found, but if we are headless - display syntax
-            String head = System.getProperty("java.awt.headless");
-            if (head != null && head.equals("true")) {
-                LOGGER.info("TMM started 'headless', and without params -> displaying syntax ");
-                TinyMediaManagerCMD.printSyntax();
-                shutdownLogger();
-                System.exit(0);
-            }
-        }
-
-        // check if we have write permissions to this folder
+    // HACK for Java 7 and JavaFX not being in boot classpath
+    // In Java 8 and on, this is installed inside jre/lib/ext
+    // see http://bugs.java.com/bugdatabase/view_bug.do?bug_id=8003171 and references
+    // so we check if it is already existent in "new" directory, and if not, load it via reflection ;o)
+    String dir = new File(LaunchUtil.getJVMPath()).getParentFile().getParent(); // bin, one deeper
+    File jfx = new File(dir, "lib/ext/jfxrt.jar");
+    if (!jfx.exists()) {
+      // java 7
+      jfx = new File(dir, "lib/jfxrt.jar");
+      if (jfx.exists()) {
         try {
-            RandomAccessFile f = new RandomAccessFile("access.test", "rw");
-            f.close();
-            Files.deleteIfExists(Paths.get("access.test"));
-        } catch (Exception e2) {
-            String msg = "Cannot write to TMM directory, have no rights - exiting.";
-            if (!GraphicsEnvironment.isHeadless()) {
-                JOptionPane.showMessageDialog(null, msg);
-            } else {
-                System.out.println(msg);
+          TmmOsUtils.addPath(jfx.getAbsolutePath());
+        }
+        catch (Exception e) {
+          LOGGER.debug("failed to load JavaFX - using old styles...");
+        }
+      }
+    }
+
+    if (Globals.isDebug()) {
+      ClassLoader cl = ClassLoader.getSystemClassLoader();
+      URL[] urls = ((URLClassLoader) cl).getURLs();
+      LOGGER.info("=== DEBUG CLASS LOADING =============================");
+      for (URL url : urls) {
+        LOGGER.info(url.getFile());
+      }
+    }
+
+    LOGGER.info("=====================================================");
+    LOGGER.info("=== tinyMediaManager (c) 2012-2018 Manuel Laggner ===");
+    LOGGER.info("=====================================================");
+    LOGGER.info("tmm.version      : " + ReleaseInfo.getRealVersion());
+
+    if (Globals.isDonator()) {
+      LOGGER.info("tmm.supporter    : THANKS FOR DONATING - ALL FEATURES UNLOCKED :)");
+    }
+
+    LOGGER.info("os.name          : " + System.getProperty("os.name"));
+    LOGGER.info("os.version       : " + System.getProperty("os.version"));
+    LOGGER.info("os.arch          : " + System.getProperty("os.arch"));
+    LOGGER.trace("network.id       : " + License.getMac());
+    LOGGER.info("java.version     : " + System.getProperty("java.version"));
+
+    if (Globals.isRunningJavaWebStart()) {
+      LOGGER.info("java.webstart    : true");
+    }
+    if (Globals.isRunningWebSwing()) {
+      LOGGER.info("java.webswing    : true");
+    }
+
+    // START character encoding debug
+    debugCharacterEncoding("default encoding : ");
+    System.setProperty("file.encoding", "UTF-8");
+    System.setProperty("sun.jnu.encoding", "UTF-8");
+    Field charset;
+    try {
+      // we cannot (re)set the properties while running inside JVM
+      // so we trick it to reread it by setting them to null ;)
+      charset = Charset.class.getDeclaredField("defaultCharset");
+      charset.setAccessible(true);
+      charset.set(null, null);
+    }
+    catch (Exception e) {
+      LOGGER.warn("Error resetting to UTF-8", e);
+    }
+    debugCharacterEncoding("set encoding to  : ");
+    // END character encoding debug
+
+    // set GUI default language
+    Locale.setDefault(Utils.getLocaleFromLanguage(Globals.settings.getLanguage()));
+    LOGGER.info("System language  : " + System.getProperty("user.language") + "_" + System.getProperty("user.country"));
+    LOGGER.info("GUI language     : " + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry());
+    LOGGER.info("Scraper language : " + MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
+    LOGGER.info("TV Scraper lang  : " + TvShowModuleManager.SETTINGS.getScraperLanguage());
+
+    // start EDT
+    EventQueue.invokeLater(new Runnable() {
+      public void run() {
+        boolean newVersion = !Globals.settings.isCurrentVersion(); // same snapshots/git considered as "new", for upgrades
+        try {
+          Thread.setDefaultUncaughtExceptionHandler(new Log4jBackstop());
+          if (!GraphicsEnvironment.isHeadless()) {
+            Thread.currentThread().setName("main");
+          }
+          else {
+            Thread.currentThread().setName("headless");
+            LOGGER.debug("starting without GUI...");
+          }
+          Toolkit tk = Toolkit.getDefaultToolkit();
+          tk.addAWTEventListener(TmmWindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
+          if (!GraphicsEnvironment.isHeadless()) {
+            setLookAndFeel();
+          }
+          doStartupTasks();
+
+          // suppress logging messages from betterbeansbinding
+          org.jdesktop.beansbinding.util.logging.Logger.getLogger(ELProperty.class.getName()).setLevel(java.util.logging.Level.SEVERE);
+
+          // init ui logger
+          TmmUILogCollector.init();
+
+          LOGGER.info("=====================================================");
+          // init splash
+          SplashScreen splash = null;
+          if (!GraphicsEnvironment.isHeadless()) {
+            splash = SplashScreen.getSplashScreen();
+          }
+          Graphics2D g2 = null;
+          if (splash != null) {
+            g2 = splash.createGraphics();
+            if (g2 != null) {
+              Font font = new Font("Dialog", Font.PLAIN, 14);
+              g2.setFont(font);
+            }
+            else {
+              LOGGER.debug("got no graphics from splash");
+            }
+          }
+          else {
+            LOGGER.debug("no splash found");
+          }
+
+          if (g2 != null) {
+            updateProgress(g2, "starting tinyMediaManager", 0);
+            splash.update();
+          }
+          LOGGER.info("starting tinyMediaManager");
+
+          // upgrade check
+          String oldVersion = Globals.settings.getVersion();
+          if (newVersion) {
+            if (g2 != null) {
+              updateProgress(g2, "upgrading to new version", 10);
+              splash.update();
+            }
+            UpgradeTasks.performUpgradeTasksBeforeDatabaseLoading(oldVersion); // do the upgrade tasks for the old version
+            Globals.settings.setCurrentVersion();
+            Globals.settings.saveSettings();
+          }
+
+          // proxy settings
+          if (Globals.settings.useProxy()) {
+            LOGGER.info("setting proxy");
+            Globals.settings.setProxy();
+          }
+
+          // MediaInfo /////////////////////////////////////////////////////
+          if (g2 != null) {
+            updateProgress(g2, "loading MediaInfo libs", 20);
+            splash.update();
+          }
+          MediaInfoUtils.loadMediaInfo();
+
+          // load modules //////////////////////////////////////////////////
+          if (g2 != null) {
+            updateProgress(g2, "loading movie module", 30);
+            splash.update();
+          }
+          TmmModuleManager.getInstance().startUp();
+          TmmModuleManager.getInstance().registerModule(MovieModuleManager.getInstance());
+          TmmModuleManager.getInstance().enableModule(MovieModuleManager.getInstance());
+
+          if (g2 != null) {
+            updateProgress(g2, "loading TV show module", 40);
+            splash.update();
+          }
+          TmmModuleManager.getInstance().registerModule(TvShowModuleManager.getInstance());
+          TmmModuleManager.getInstance().enableModule(TvShowModuleManager.getInstance());
+
+          if (g2 != null) {
+            updateProgress(g2, "loading plugins", 50);
+            splash.update();
+          }
+          // just instantiate static - will block (takes a few secs)
+          PluginManager.getInstance();
+          if (ReleaseInfo.isGitBuild()) {
+            PluginManager.loadClasspathPlugins();
+          }
+
+          if (g2 != null) {
+            updateProgress(g2, "starting services", 60);
+            splash.update();
+          }
+          Upnp u = Upnp.getInstance();
+          if (Globals.settings.isUpnpShareLibrary()) {
+            u.startWebServer();
+            u.createUpnpService();
+            u.startMediaServer();
+          }
+          if (Globals.settings.isUpnpRemotePlay()) {
+            u.createUpnpService();
+            u.sendPlayerSearchRequest();
+            u.startWebServer();
+          }
+
+          // do upgrade tasks after database loading
+          if (newVersion) {
+            if (g2 != null) {
+              updateProgress(g2, "upgrading database to new version", 70);
+              splash.update();
+            }
+            UpgradeTasks.performUpgradeTasksAfterDatabaseLoading(oldVersion);
+          }
+
+          // launch application ////////////////////////////////////////////
+          if (g2 != null) {
+            updateProgress(g2, "loading ui", 80);
+            splash.update();
+          }
+          if (!GraphicsEnvironment.isHeadless()) {
+            MainWindow window = new ChangedMainWindow("changedTinyMediaManager / " + ReleaseInfo.getRealVersion());
+
+            // finished ////////////////////////////////////////////////////
+            if (g2 != null) {
+              updateProgress(g2, "finished starting :)", 100);
+              splash.update();
+            }
+
+            TmmWindowSaver.getInstance().loadSettings(window);
+            window.setVisible(true);
+
+            // wizard for new user
+            if (Globals.settings.newConfig) {
+              Globals.settings.writeDefaultSettings(); // now all plugins are resolved - write again defaults!
+              TinyMediaManagerWizard wizard = new TinyMediaManagerWizard();
+              wizard.setVisible(true);
+            }
+
+            TmmTaskManager.getInstance().addUnnamedTask(new PreloadTask());
+            // show changelog
+            if (newVersion && !ReleaseInfo.getVersion().equals(oldVersion)) {
+              // special case nightly/git: if same snapshot version, do not display changelog
+              showChangelog();
+            }
+          }
+          else {
+            TinyMediaManagerCMD.startCommandLineTasks();
+            // wait for other tmm threads (artwork download et all)
+            while (TmmTaskManager.getInstance().poolRunning()) {
+              Thread.sleep(2000);
+            }
+
+            LOGGER.info("bye bye");
+            // MainWindows.shutdown()
+            try {
+              // send shutdown signal
+              TmmTaskManager.getInstance().shutdown();
+              // save unsaved settings
+              Globals.settings.saveSettings();
+              // hard kill
+              TmmTaskManager.getInstance().shutdownNow();
+              // close database connection
+              TmmModuleManager.getInstance().shutDown();
+            }
+            catch (Exception ex) {
+              LOGGER.warn(ex.getMessage());
             }
             shutdownLogger();
-            System.exit(1);
+            System.exit(0);
+          }
         }
-
-        // HACK for Java 7 and JavaFX not being in boot classpath
-        // In Java 8 and on, this is installed inside jre/lib/ext
-        // see http://bugs.java.com/bugdatabase/view_bug.do?bug_id=8003171 and references
-        // so we check if it is already existent in "new" directory, and if not, load it via reflection ;o)
-        String dir = new File(LaunchUtil.getJVMPath()).getParentFile().getParent(); // bin, one deeper
-        File jfx = new File(dir, "lib/ext/jfxrt.jar");
-        if (!jfx.exists()) {
-            // java 7
-            jfx = new File(dir, "lib/jfxrt.jar");
-            if (jfx.exists()) {
-                try {
-                    TmmOsUtils.addPath(jfx.getAbsolutePath());
-                } catch (Exception e) {
-                    LOGGER.debug("failed to load JavaFX - using old styles...");
-                }
-            }
+        catch (IllegalStateException e) {
+          LOGGER.error("IllegalStateException", e);
+          if (!GraphicsEnvironment.isHeadless() && e.getMessage().contains("file is locked")) {
+            // MessageDialog.showExceptionWindow(e);
+            ResourceBundle bundle = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+            MessageDialog dialog = new MessageDialog(MainWindow.getActiveInstance(), bundle.getString("tmm.problemdetected")); //$NON-NLS-1$
+            dialog.setImage(IconManager.ERROR);
+            dialog.setText(bundle.getString("tmm.nostart"));//$NON-NLS-1$
+            dialog.setDescription(bundle.getString("tmm.nostart.instancerunning"));//$NON-NLS-1$
+            dialog.setResizable(true);
+            dialog.pack();
+            dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+            dialog.setVisible(true);
+          }
+          shutdownLogger();
+          System.exit(1);
         }
-
-        if (Globals.isDebug()) {
-            ClassLoader cl = ClassLoader.getSystemClassLoader();
-            URL[] urls = ((URLClassLoader) cl).getURLs();
-            LOGGER.info("=== DEBUG CLASS LOADING =============================");
-            for (URL url : urls) {
-                LOGGER.info(url.getFile());
-            }
+        catch (Exception e) {
+          LOGGER.error("Exception while start of tmm", e);
+          if (!GraphicsEnvironment.isHeadless()) {
+            MessageDialog.showExceptionWindow(e);
+          }
+          shutdownLogger();
+          System.exit(1);
         }
+      }
 
-        LOGGER.info("=====================================================");
-        LOGGER.info("=== tinyMediaManager (c) 2012-2018 Manuel Laggner ===");
-        LOGGER.info("=====================================================");
-        LOGGER.info("tmm.version      : " + ReleaseInfo.getRealVersion());
+      /**
+       * Update progress on splash screen.
+       *
+       * @param text
+       *          the text
+       */
+      private void updateProgress(Graphics2D g2, String text, int progress) {
+        Object oldAAValue = g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+        g2.setComposite(AlphaComposite.Clear);
+        g2.fillRect(20, 200, 480, 305);
+        g2.setPaintMode();
 
-        if (Globals.isDonator()) {
-            LOGGER.info("tmm.supporter    : THANKS FOR DONATING - ALL FEATURES UNLOCKED :)");
-        }
+        g2.setColor(new Color(51, 153, 255));
+        g2.fillRect(22, 272, 452 * progress / 100, 21);
 
-        LOGGER.info("os.name          : " + System.getProperty("os.name"));
-        LOGGER.info("os.version       : " + System.getProperty("os.version"));
-        LOGGER.info("os.arch          : " + System.getProperty("os.arch"));
-        LOGGER.trace("network.id       : " + License.getMac());
-        LOGGER.info("java.version     : " + System.getProperty("java.version"));
+        g2.setColor(Color.black);
+        g2.drawString(text + "...", 23, 310);
+        int l = g2.getFontMetrics().stringWidth(ReleaseInfo.getRealVersion()); // bound right
+        g2.drawString(ReleaseInfo.getRealVersion(), 480 - l, 325);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
+        LOGGER.debug("Startup (" + progress + "%) " + text);
+      }
 
-        if (Globals.isRunningJavaWebStart()) {
-            LOGGER.info("java.webstart    : true");
-        }
-        if (Globals.isRunningWebSwing()) {
-            LOGGER.info("java.webswing    : true");
-        }
-
-        // START character encoding debug
-        debugCharacterEncoding("default encoding : ");
-        System.setProperty("file.encoding", "UTF-8");
-        System.setProperty("sun.jnu.encoding", "UTF-8");
-        Field charset;
+      /**
+       * Sets the look and feel.
+       *
+       * @throws Exception
+       *           the exception
+       */
+      private void setLookAndFeel() throws Exception {
+        // get font settings
+        String fontFamily = Globals.settings.getFontFamily();
         try {
-            // we cannot (re)set the properties while running inside JVM
-            // so we trick it to reread it by setting them to null ;)
-            charset = Charset.class.getDeclaredField("defaultCharset");
-            charset.setAccessible(true);
-            charset.set(null, null);
-        } catch (Exception e) {
-            LOGGER.warn("Error resetting to UTF-8", e);
+          // sanity check
+          fontFamily = Font.decode(fontFamily).getFamily();
         }
-        debugCharacterEncoding("set encoding to  : ");
-        // END character encoding debug
-
-        // set GUI default language
-        Locale.setDefault(Utils.getLocaleFromLanguage(Globals.settings.getLanguage()));
-        LOGGER.info("System language  : " + System.getProperty("user.language") + "_" + System.getProperty("user.country"));
-        LOGGER.info("GUI language     : " + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry());
-        LOGGER.info("Scraper language : " + MovieModuleManager.MOVIE_SETTINGS.getScraperLanguage());
-        LOGGER.info("TV Scraper lang  : " + TvShowModuleManager.SETTINGS.getScraperLanguage());
-
-        // start EDT
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                boolean newVersion = !Globals.settings.isCurrentVersion(); // same snapshots/git considered as "new", for upgrades
-                try {
-                    Thread.setDefaultUncaughtExceptionHandler(new Log4jBackstop());
-                    if (!GraphicsEnvironment.isHeadless()) {
-                        Thread.currentThread().setName("main");
-                    } else {
-                        Thread.currentThread().setName("headless");
-                        LOGGER.debug("starting without GUI...");
-                    }
-                    Toolkit tk = Toolkit.getDefaultToolkit();
-                    tk.addAWTEventListener(TmmWindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
-                    if (!GraphicsEnvironment.isHeadless()) {
-                        setLookAndFeel();
-                    }
-                    doStartupTasks();
-
-                    // suppress logging messages from betterbeansbinding
-                    org.jdesktop.beansbinding.util.logging.Logger.getLogger(ELProperty.class.getName()).setLevel(java.util.logging.Level.SEVERE);
-
-                    // init ui logger
-                    TmmUILogCollector.init();
-
-                    LOGGER.info("=====================================================");
-                    // init splash
-                    SplashScreen splash = null;
-                    if (!GraphicsEnvironment.isHeadless()) {
-                        splash = SplashScreen.getSplashScreen();
-                    }
-                    Graphics2D g2 = null;
-                    if (splash != null) {
-                        g2 = splash.createGraphics();
-                        if (g2 != null) {
-                            Font font = new Font("Dialog", Font.PLAIN, 14);
-                            g2.setFont(font);
-                        } else {
-                            LOGGER.debug("got no graphics from splash");
-                        }
-                    } else {
-                        LOGGER.debug("no splash found");
-                    }
-
-                    if (g2 != null) {
-                        updateProgress(g2, "starting tinyMediaManager", 0);
-                        splash.update();
-                    }
-                    LOGGER.info("starting tinyMediaManager");
-
-                    // upgrade check
-                    String oldVersion = Globals.settings.getVersion();
-                    if (newVersion) {
-                        if (g2 != null) {
-                            updateProgress(g2, "upgrading to new version", 10);
-                            splash.update();
-                        }
-                        UpgradeTasks.performUpgradeTasksBeforeDatabaseLoading(oldVersion); // do the upgrade tasks for the old version
-                        Globals.settings.setCurrentVersion();
-                        Globals.settings.saveSettings();
-                    }
-
-                    // proxy settings
-                    if (Globals.settings.useProxy()) {
-                        LOGGER.info("setting proxy");
-                        Globals.settings.setProxy();
-                    }
-
-                    // MediaInfo /////////////////////////////////////////////////////
-                    if (g2 != null) {
-                        updateProgress(g2, "loading MediaInfo libs", 20);
-                        splash.update();
-                    }
-                    MediaInfoUtils.loadMediaInfo();
-
-                    // load modules //////////////////////////////////////////////////
-                    if (g2 != null) {
-                        updateProgress(g2, "loading movie module", 30);
-                        splash.update();
-                    }
-                    TmmModuleManager.getInstance().startUp();
-                    TmmModuleManager.getInstance().registerModule(MovieModuleManager.getInstance());
-                    TmmModuleManager.getInstance().enableModule(MovieModuleManager.getInstance());
-
-                    if (g2 != null) {
-                        updateProgress(g2, "loading TV show module", 40);
-                        splash.update();
-                    }
-                    TmmModuleManager.getInstance().registerModule(TvShowModuleManager.getInstance());
-                    TmmModuleManager.getInstance().enableModule(TvShowModuleManager.getInstance());
-
-                    if (g2 != null) {
-                        updateProgress(g2, "loading plugins", 50);
-                        splash.update();
-                    }
-                    // just instantiate static - will block (takes a few secs)
-                    PluginManager.getInstance();
-                    if (ReleaseInfo.isGitBuild()) {
-                        PluginManager.loadClasspathPlugins();
-                    }
-
-                    if (g2 != null) {
-                        updateProgress(g2, "starting services", 60);
-                        splash.update();
-                    }
-                    Upnp u = Upnp.getInstance();
-                    if (Globals.settings.isUpnpShareLibrary()) {
-                        u.startWebServer();
-                        u.createUpnpService();
-                        u.startMediaServer();
-                    }
-                    if (Globals.settings.isUpnpRemotePlay()) {
-                        u.createUpnpService();
-                        u.sendPlayerSearchRequest();
-                        u.startWebServer();
-                    }
-
-                    // do upgrade tasks after database loading
-                    if (newVersion) {
-                        if (g2 != null) {
-                            updateProgress(g2, "upgrading database to new version", 70);
-                            splash.update();
-                        }
-                        UpgradeTasks.performUpgradeTasksAfterDatabaseLoading(oldVersion);
-                    }
-
-                    // launch application ////////////////////////////////////////////
-                    if (g2 != null) {
-                        updateProgress(g2, "loading ui", 80);
-                        splash.update();
-                    }
-                    if (!GraphicsEnvironment.isHeadless()) {
-                        MainWindow window = new ChangedMainWindow("changedTinyMediaManager / " + ReleaseInfo.getRealVersion());
-
-                        // finished ////////////////////////////////////////////////////
-                        if (g2 != null) {
-                            updateProgress(g2, "finished starting :)", 100);
-                            splash.update();
-                        }
-
-                        TmmWindowSaver.getInstance().loadSettings(window);
-                        window.setVisible(true);
-
-                        // wizard for new user
-                        if (Globals.settings.newConfig) {
-                            Globals.settings.writeDefaultSettings(); // now all plugins are resolved - write again defaults!
-                            TinyMediaManagerWizard wizard = new TinyMediaManagerWizard();
-                            wizard.setVisible(true);
-                        }
-
-                        TmmTaskManager.getInstance().addUnnamedTask(new PreloadTask());
-                        // show changelog
-                        if (newVersion && !ReleaseInfo.getVersion().equals(oldVersion)) {
-                            // special case nightly/git: if same snapshot version, do not display changelog
-                            showChangelog();
-                        }
-                    } else {
-                        TinyMediaManagerCMD.startCommandLineTasks();
-                        // wait for other tmm threads (artwork download et all)
-                        while (TmmTaskManager.getInstance().poolRunning()) {
-                            Thread.sleep(2000);
-                        }
-
-                        LOGGER.info("bye bye");
-                        // MainWindows.shutdown()
-                        try {
-                            // send shutdown signal
-                            TmmTaskManager.getInstance().shutdown();
-                            // save unsaved settings
-                            Globals.settings.saveSettings();
-                            // hard kill
-                            TmmTaskManager.getInstance().shutdownNow();
-                            // close database connection
-                            TmmModuleManager.getInstance().shutDown();
-                        } catch (Exception ex) {
-                            LOGGER.warn(ex.getMessage());
-                        }
-                        shutdownLogger();
-                        System.exit(0);
-                    }
-                } catch (IllegalStateException e) {
-                    LOGGER.error("IllegalStateException", e);
-                    if (!GraphicsEnvironment.isHeadless() && e.getMessage().contains("file is locked")) {
-                        // MessageDialog.showExceptionWindow(e);
-                        ResourceBundle bundle = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-                        MessageDialog dialog = new MessageDialog(MainWindow.getActiveInstance(), bundle.getString("tmm.problemdetected")); //$NON-NLS-1$
-                        dialog.setImage(IconManager.ERROR);
-                        dialog.setText(bundle.getString("tmm.nostart"));//$NON-NLS-1$
-                        dialog.setDescription(bundle.getString("tmm.nostart.instancerunning"));//$NON-NLS-1$
-                        dialog.setResizable(true);
-                        dialog.pack();
-                        dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-                        dialog.setVisible(true);
-                    }
-                    shutdownLogger();
-                    System.exit(1);
-                } catch (Exception e) {
-                    LOGGER.error("Exception while start of tmm", e);
-                    if (!GraphicsEnvironment.isHeadless()) {
-                        MessageDialog.showExceptionWindow(e);
-                    }
-                    shutdownLogger();
-                    System.exit(1);
-                }
-            }
-
-            /**
-             * Update progress on splash screen.
-             *
-             * @param text
-             *          the text
-             */
-            private void updateProgress(Graphics2D g2, String text, int progress) {
-                Object oldAAValue = g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
-                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-                g2.setComposite(AlphaComposite.Clear);
-                g2.fillRect(20, 200, 480, 305);
-                g2.setPaintMode();
-
-                g2.setColor(new Color(51, 153, 255));
-                g2.fillRect(22, 272, 452 * progress / 100, 21);
-
-                g2.setColor(Color.black);
-                g2.drawString(text + "...", 23, 310);
-                int l = g2.getFontMetrics().stringWidth(ReleaseInfo.getRealVersion()); // bound right
-                g2.drawString(ReleaseInfo.getRealVersion(), 480 - l, 325);
-                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldAAValue);
-                LOGGER.debug("Startup (" + progress + "%) " + text);
-            }
-
-            /**
-             * Sets the look and feel.
-             *
-             * @throws Exception
-             *           the exception
-             */
-            private void setLookAndFeel() throws Exception {
-                // get font settings
-                String fontFamily = Globals.settings.getFontFamily();
-                try {
-                    // sanity check
-                    fontFamily = Font.decode(fontFamily).getFamily();
-                } catch (Exception e) {
-                    fontFamily = "Dialog";
-                }
-
-                int fontSize = Globals.settings.getFontSize();
-                if (fontSize < 12) {
-                    fontSize = 12;
-                }
-
-                String fontString = fontFamily + " " + fontSize;
-
-                // Get the native look and feel class name
-                // String laf = UIManager.getSystemLookAndFeelClassName();
-                Properties props = new Properties();
-                props.setProperty("controlTextFont", fontString);
-                props.setProperty("systemTextFont", fontString);
-                props.setProperty("userTextFont", fontString);
-                props.setProperty("menuTextFont", fontString);
-                // props.setProperty("windowTitleFont", "Dialog bold 20");
-
-                fontSize = Math.round((float) (fontSize * 0.833));
-                fontString = fontFamily + " " + fontSize;
-
-                props.setProperty("subTextFont", fontString);
-                props.setProperty("backgroundColor", "237 237 237");
-                props.setProperty("menuBackgroundColor", "237 237 237");
-                props.setProperty("controlBackgroundColor", "237 237 237");
-                props.setProperty("menuColorLight", "237 237 237");
-                props.setProperty("menuColorDark", "237 237 237");
-                props.setProperty("toolbarColorLight", "237 237 237");
-                props.setProperty("toolbarColorDark", "237 237 237");
-                props.setProperty("tooltipBackgroundColor", "255 255 255");
-                props.put("windowDecoration", "system");
-                props.put("logoString", "");
-
-                // Get the look and feel class name
-                com.jtattoo.plaf.luna.LunaLookAndFeel.setTheme(props);
-                String laf = "com.jtattoo.plaf.luna.LunaLookAndFeel";
-
-                // Install the look and feel
-                UIManager.setLookAndFeel(laf);
-            }
-
-            /**
-             * Does some tasks at startup
-             */
-            private void doStartupTasks() {
-                // rename downloaded files
-                UpgradeTasks.renameDownloadedFiles();
-
-                // extract templates, if GD has not already done
-                Utils.extractTemplates();
-
-                // clean old log files
-                Utils.cleanOldLogs();
-
-                // check if a .desktop file exists
-                if (Platform.isLinux()) {
-                    File desktop = new File(TmmOsUtils.DESKTOP_FILE);
-                    if (!desktop.exists()) {
-                        TmmOsUtils.createDesktopFileForLinux(desktop);
-                    }
-                }
-            }
-
-            private void showChangelog() {
-                // read the changelog
-                try {
-                    final String changelog = Utils.readFileToString(Paths.get("changelog.txt"));
-                    if (StringUtils.isNotBlank(changelog)) {
-                        EventQueue.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                WhatsNewDialog dialog = new WhatsNewDialog(changelog);
-                                dialog.pack();
-                                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-                                dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-                                dialog.setVisible(true);
-                            }
-                        });
-                    }
-                } catch (IOException e) {
-                    // no file found
-                    LOGGER.warn(e.getMessage());
-                }
-            }
-        });
-    }
-
-    public static void shutdownLogger() {
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        loggerContext.stop();
-    }
-
-    private static void setConsoleLogLevel() {
-        String loglevelAsString = System.getProperty("tmm.consoleloglevel", "");
-        Level level;
-
-        switch (loglevelAsString) {
-            case "ERROR":
-                level = Level.TRACE;
-                break;
-
-            case "WARN":
-                level = Level.WARN;
-                break;
-
-            case "INFO":
-                level = Level.INFO;
-                break;
-
-            case "DEBUG":
-                level = Level.DEBUG;
-                break;
-
-            case "TRACE":
-                level = Level.TRACE;
-                break;
-
-            default:
-                return;
+        catch (Exception e) {
+          fontFamily = "Dialog";
         }
 
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-
-        // get the console appener
-        Appender consoleAppender = lc.getLogger("ROOT").getAppender("CONSOLE");
-        if (consoleAppender instanceof ConsoleAppender) {
-            // and set a filter to drop messages beneath the given level
-            ThresholdLoggerFilter filter = new ThresholdLoggerFilter(level);
-            filter.start();
-            consoleAppender.addFilter(filter);
+        int fontSize = Globals.settings.getFontSize();
+        if (fontSize < 12) {
+          fontSize = 12;
         }
+
+        String fontString = fontFamily + " " + fontSize;
+
+        // Get the native look and feel class name
+        // String laf = UIManager.getSystemLookAndFeelClassName();
+        Properties props = new Properties();
+        props.setProperty("controlTextFont", fontString);
+        props.setProperty("systemTextFont", fontString);
+        props.setProperty("userTextFont", fontString);
+        props.setProperty("menuTextFont", fontString);
+        // props.setProperty("windowTitleFont", "Dialog bold 20");
+
+        fontSize = Math.round((float) (fontSize * 0.833));
+        fontString = fontFamily + " " + fontSize;
+
+        props.setProperty("subTextFont", fontString);
+        props.setProperty("backgroundColor", "237 237 237");
+        props.setProperty("menuBackgroundColor", "237 237 237");
+        props.setProperty("controlBackgroundColor", "237 237 237");
+        props.setProperty("menuColorLight", "237 237 237");
+        props.setProperty("menuColorDark", "237 237 237");
+        props.setProperty("toolbarColorLight", "237 237 237");
+        props.setProperty("toolbarColorDark", "237 237 237");
+        props.setProperty("tooltipBackgroundColor", "255 255 255");
+        props.put("windowDecoration", "system");
+        props.put("logoString", "");
+
+        // Get the look and feel class name
+        com.jtattoo.plaf.luna.LunaLookAndFeel.setTheme(props);
+        String laf = "com.jtattoo.plaf.luna.LunaLookAndFeel";
+
+        // Install the look and feel
+        UIManager.setLookAndFeel(laf);
+      }
+
+      /**
+       * Does some tasks at startup
+       */
+      private void doStartupTasks() {
+        // rename downloaded files
+        UpgradeTasks.renameDownloadedFiles();
+
+        // extract templates, if GD has not already done
+        Utils.extractTemplates();
+
+        // clean old log files
+        Utils.cleanOldLogs();
+
+        // check if a .desktop file exists
+        if (Platform.isLinux()) {
+          File desktop = new File(TmmOsUtils.DESKTOP_FILE);
+          if (!desktop.exists()) {
+            TmmOsUtils.createDesktopFileForLinux(desktop);
+          }
+        }
+      }
+
+      private void showChangelog() {
+        // read the changelog
+        try {
+          final String changelog = Utils.readFileToString(Paths.get("changelog.txt"));
+          if (StringUtils.isNotBlank(changelog)) {
+            EventQueue.invokeLater(new Runnable() {
+              @Override public void run() {
+                WhatsNewDialog dialog = new WhatsNewDialog(changelog);
+                dialog.pack();
+                dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+                dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+                dialog.setVisible(true);
+              }
+            });
+          }
+        }
+        catch (IOException e) {
+          // no file found
+          LOGGER.warn(e.getMessage());
+        }
+      }
+    });
+  }
+
+  public static void shutdownLogger() {
+    LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+    loggerContext.stop();
+  }
+
+  private static void setConsoleLogLevel() {
+    String loglevelAsString = System.getProperty("tmm.consoleloglevel", "");
+    Level level;
+
+    switch (loglevelAsString) {
+      case "ERROR":
+        level = Level.TRACE;
+        break;
+
+      case "WARN":
+        level = Level.WARN;
+        break;
+
+      case "INFO":
+        level = Level.INFO;
+        break;
+
+      case "DEBUG":
+        level = Level.DEBUG;
+        break;
+
+      case "TRACE":
+        level = Level.TRACE;
+        break;
+
+      default:
+        return;
     }
 
-    /**
-     * debug various JVM character settings
-     */
-    private static void debugCharacterEncoding(String text) {
-        String defaultCharacterEncoding = System.getProperty("file.encoding");
-        byte[] bArray = {'w'};
-        InputStream is = new ByteArrayInputStream(bArray);
-        InputStreamReader reader = new InputStreamReader(is);
-        LOGGER.info(text + defaultCharacterEncoding + " | " + reader.getEncoding() + " | " + Charset.defaultCharset());
+    LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+    // get the console appener
+    Appender consoleAppender = lc.getLogger("ROOT").getAppender("CONSOLE");
+    if (consoleAppender instanceof ConsoleAppender) {
+      // and set a filter to drop messages beneath the given level
+      ThresholdLoggerFilter filter = new ThresholdLoggerFilter(level);
+      filter.start();
+      consoleAppender.addFilter(filter);
     }
+  }
+
+  /**
+   * debug various JVM character settings
+   */
+  private static void debugCharacterEncoding(String text) {
+    String defaultCharacterEncoding = System.getProperty("file.encoding");
+    byte[] bArray = { 'w' };
+    InputStream is = new ByteArrayInputStream(bArray);
+    InputStreamReader reader = new InputStreamReader(is);
+    LOGGER.info(text + defaultCharacterEncoding + " | " + reader.getEncoding() + " | " + Charset.defaultCharset());
+  }
 }

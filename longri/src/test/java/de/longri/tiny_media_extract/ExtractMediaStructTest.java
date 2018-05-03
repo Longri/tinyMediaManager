@@ -62,9 +62,9 @@ class ExtractMediaStructTest {
 
         // check if Media file replaced with dummy media file
         assertThat("must", castleFolder.child("Castle_S04_E01_Neuanfang.mkv").length() == dummyLength);
-        assertThat("must", castleFolder.child("Castle_S04_E02_Helden und Bösewichter.mkv").length() == dummyLength);
+        assertThat("must", castleFolder.child("Castle_S04_E02_Helden und Bosewichter.mkv").length() == dummyLength);
         assertThat("must", castleFolder.child("Castle_S04_E03_Kopflos.mkv").length() == dummyLength);
-        assertThat("must", castleFolder.child("Castle_S04_E04_Dem Dreifachmörder auf der Spur.mkv").length() == dummyLength);
+        assertThat("must", castleFolder.child("Castle_S04_E04_Dem Dreifachmorder auf der Spur.mkv").length() == dummyLength);
         assertThat("must", castleFolder.child("Castle_S04_E05_Im Auge des Betrachters.mkv").length() == dummyLength);
 
         target.deleteDirectory();
