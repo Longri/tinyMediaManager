@@ -16,17 +16,54 @@
 package de.longri.tinymediamanager;
 
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.dialogs.LogDialog;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 /**
  * Created by Longri on 03.05.2018.
  */
 public class ChangedMainWindow extends MainWindow {
-  /**
-   * Create the application.
-   *
-   * @param name the name
-   */
-  public ChangedMainWindow(String name) {
-    super(name);
-  }
+    /**
+     * Create the application.
+     *
+     * @param name the name
+     */
+    public ChangedMainWindow(String name) {
+        super(name);
+
+        JMenuBar menuBar = getJMenuBar();
+
+        JMenu tools = menuBar.getMenu(3);//tools menu
+
+        tools.addSeparator();
+
+        JMenuItem tmmExtractFromServer = new JMenuItem("Extract NFO from Server"); //$NON-NLS-1$
+        tmmExtractFromServer.setMnemonic(KeyEvent.VK_L);
+        tools.add(tmmExtractFromServer);
+        tmmExtractFromServer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                JDialog logDialog = new LogDialog();
+                logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+                logDialog.setVisible(true);
+            }
+        });
+
+        JMenuItem tmmWriteBackToServer = new JMenuItem("WriteBack to Server"); //$NON-NLS-1$
+        tmmWriteBackToServer.setMnemonic(KeyEvent.VK_L);
+        tools.add(tmmWriteBackToServer);
+        tmmWriteBackToServer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                JDialog logDialog = new LogDialog();
+                logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+                logDialog.setVisible(true);
+            }
+        });
+
+    }
 }
