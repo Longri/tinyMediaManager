@@ -15,55 +15,138 @@
  */
 package de.longri.tinymediamanager;
 
+import org.tinymediamanager.core.TmmProperties;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieSettings;
+import org.tinymediamanager.core.tvshow.TvShowModuleManager;
+import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.ui.MainWindow;
+import org.tinymediamanager.ui.TmmUIHelper;
+import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.LogDialog;
 
 import javax.swing.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.StringBuilder;
 
 /**
  * Created by Longri on 03.05.2018.
  */
 public class ChangedMainWindow extends MainWindow {
-    /**
-     * Create the application.
-     *
-     * @param name the name
-     */
-    public ChangedMainWindow(String name) {
-        super(name);
 
-        JMenuBar menuBar = getJMenuBar();
+  private static final String SERVER_PATH_PROPERTY = "longri.server.path";
 
-        JMenu tools = menuBar.getMenu(3);//tools menu
+  private static final ResourceBundle BUNDLE          = ResourceBundle.getBundle("messages", new UTF8Control());
+  private              MovieSettings  Movie_Settings  = MovieModuleManager.MOVIE_SETTINGS;
+  private              TvShowSettings TvShow_Settings = TvShowModuleManager.SETTINGS;
 
-        tools.addSeparator();
+  /**
+   * Create the application.
+   *
+   * @param name the name
+   */
+  public ChangedMainWindow(String name) {
+    super(name);
 
-        JMenuItem tmmExtractFromServer = new JMenuItem("Extract NFO from Server"); //$NON-NLS-1$
-        tmmExtractFromServer.setMnemonic(KeyEvent.VK_L);
-        tools.add(tmmExtractFromServer);
-        tmmExtractFromServer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                JDialog logDialog = new LogDialog();
-                logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-                logDialog.setVisible(true);
-            }
-        });
+    JMenuBar menuBar = getJMenuBar();
 
-        JMenuItem tmmWriteBackToServer = new JMenuItem("WriteBack to Server"); //$NON-NLS-1$
-        tmmWriteBackToServer.setMnemonic(KeyEvent.VK_L);
-        tools.add(tmmWriteBackToServer);
-        tmmWriteBackToServer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                JDialog logDialog = new LogDialog();
-                logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-                logDialog.setVisible(true);
-            }
-        });
+    JMenu tools = menuBar.getMenu(3);//tools menu
 
+    tools.addSeparator();
+
+    JMenuItem tmmExtractFromServer = new JMenuItem("Extract NFO from Server"); //$NON-NLS-1$
+    tmmExtractFromServer.setMnemonic(KeyEvent.VK_L);
+    tools.add(tmmExtractFromServer);
+    tmmExtractFromServer.addActionListener(new ActionListener() {
+      @Override public void actionPerformed(ActionEvent arg0) {
+        //                JDialog logDialog = new LogDialog();
+        //                logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+        //                logDialog.setVisible(true);
+        extractFromServer();
+      }
+    });
+
+    JMenuItem tmmWriteBackToServer = new JMenuItem("WriteBack to Server"); //$NON-NLS-1$
+    tmmWriteBackToServer.setMnemonic(KeyEvent.VK_L);
+    tools.add(tmmWriteBackToServer);
+    tmmWriteBackToServer.addActionListener(new ActionListener() {
+      @Override public void actionPerformed(ActionEvent arg0) {
+        JDialog logDialog = new LogDialog();
+        logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+        logDialog.setVisible(true);
+      }
+    });
+
+  }
+
+  private void extractFromServer() {
+
+    //check if DataSource set
+    List<String> movieSource = Movie_Settings.getMovieDataSource();
+    List<String> tvShowSource = TvShow_Settings.getTvShowDataSource();
+
+    if (movieSource.isEmpty() || tvShowSource.isEmpty()) {
+      throw new NullPointerException("Media Source must not be null");
     }
+
+    FileHandle target = extractTargetPath(movieSource, tvShowSource);
+
+    String path = TmmProperties.getInstance().getProperty(SERVER_PATH_PROPERTY);
+    Path file = TmmUIHelper.selectDirectory("Select Server Path", path); //$NON-NLS-1$
+    if (file != null && Files.isDirectory(file)) {
+      //      settings.addMovieDataSources(file.toAbsolutePath().toString());
+      TmmProperties.getInstance().putProperty(SERVER_PATH_PROPERTY, file.toAbsolutePath().toString());
+    }
+  }
+
+  private FileHandle extractTargetPath(List<String> movieSource, List<String> tvShowSource) {
+
+    FileHandle combinedMovie = getCombinedPath(movieSource);
+    FileHandle combinedTvShow = getCombinedPath(tvShowSource);
+
+    return null;
+  }
+
+  private FileHandle getCombinedPath(List<String> source) {
+    String[][] arr =  new String[][]{{}};
+
+    int idx = 0;
+    int minLength = Integer.MAX_VALUE;
+    for (String path : source) {
+      arr[idx] = path.split(File.separator);
+      minLength = Integer.min(minLength, arr[idx].length);
+      idx++;
+    }
+
+    int lastEqualsIndex = -1;
+    for (int i = 0; i < minLength; i++) {
+      if (lastEqualsIndex >= 0)
+        break;
+      for (int j = 0; j < arr.length - 1; j++) {
+        if (!arr[j][i].equals(arr[j + 1][i])) {
+          lastEqualsIndex = i - 1;
+          break;
+        }
+      }
+    }
+
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < lastEqualsIndex; i++) {
+      sb.append(arr[0][i]);
+    }
+
+    return Gdx.files.absolute(sb.toString());
+  }
+
 }

@@ -13,10 +13,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 class ExtractMediaStructTest {
 
-    static final boolean extract = false;
-    static final boolean writeBack = true;
-
-
     @BeforeAll
     static void beforeAll() {
 
@@ -95,21 +91,5 @@ class ExtractMediaStructTest {
 
         target.deleteDirectory();
     }
-
-//    @Test
-//    void extractServer() {
-//
-//        FileHandle source = Gdx.files.absolute("/Volumes/Media");
-////        FileHandle source = Gdx.files.absolute("/Volumes/HDD_DATA/test");
-//        FileHandle target = Gdx.files.absolute("/Volumes/HDD_DATA/ExtractedMediaDB");
-//
-//        assertThat("Source must exist", source.exists());
-//        assertThat("Target must exist", target.exists());
-//
-//        if (extract) new ExtractMediaStruct(source, target).extract();
-//
-//        if (writeBack) new WriteNfoBack(target, source).extract();
-//
-//    }
 
 }
