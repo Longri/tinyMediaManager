@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2017-11-17 13:59:16 - tinyMediaManager 2.9.5 -->
+<episodedetails>
+    <title>Dem Dreifachmörder auf der Spur</title>
+    <showtitle>Castle</showtitle>
+    <rating>7.8</rating>
+    <votes>123</votes>
+    <season>4</season>
+    <episode>4</episode>
+    <uniqueid>4146619</uniqueid>
+    <displayseason>-1</displayseason>
+    <displayepisode>-1</displayepisode>
+    <plot>Auf einer Baustelle wird die Leiche von Jane Herzfeld in flüssigem Beton entdeckt. Die Ermittlungen ergeben, dass die Studentin mit Ryans Dienstwaffe erschossen wurde, die ihm vor einigen Monaten vom Dreifachmörder Jerry Tyson gestohlen wurde. An Janes Kleidung finden sich Spuren von Kokain, ihre Mutter verdächtigt sofort ihren Exfreund Finn McQueen. Ryan fühlt sich schuldig am Tod der jungen Frau und schwört, Jerry Tyson zu finden ...</plot>
+    <thumb></thumb>
+    <mpaa>TV-14</mpaa>
+    <playcount>0</playcount>
+    <lastplayed></lastplayed>
+    <watched>false</watched>
+    <credits>Moira Kirland</credits>
+    <director>Rob Bowman</director>
+    <aired>2011-10-10</aired>
+    <premiered>2011-10-10</premiered>
+    <studio>ABC (US)</studio>
+    <source>UNKNOWN</source>
+    <actor>
+        <name>Ross McCall</name>
+    </actor>
+    <actor>
+        <name>Tim Jo</name>
+    </actor>
+    <actor>
+        <name>Billy Lush</name>
+    </actor>
+    <actor>
+        <name>François Chau</name>
+    </actor>
+    <actor>
+        <name>Lanny Joon</name>
+    </actor>
+    <actor>
+        <name>Mercedes Colon</name>
+    </actor>
+    <actor>
+        <name>Nadine Crocker</name>
+    </actor>
+    <actor>
+        <name>Stephanie Nash</name>
+    </actor>
+    <fileinfo>
+        <streamdetails>
+            <video>
+                <codec>h264</codec>
+                <aspect>1.33</aspect>
+                <width>720</width>
+                <height>576</height>
+                <durationinseconds>2477</durationinseconds>
+            </video>
+            <audio>
+                <codec>AAC</codec>
+                <language>deu</language>
+                <channels>2</channels>
+            </audio>
+            <audio>
+                <codec>AC3</codec>
+                <language>deu</language>
+                <channels>2</channels>
+            </audio>
+        </streamdetails>
+    </fileinfo>
+    <epbookmark>0.000000</epbookmark>
+    <year>0</year>
+    <top250>0</top250>
+    <outline/>
+    <tagline/>
+    <runtime>41</runtime>
+    <id/>
+    <set/>
+    <status/>
+    <code/>
+    <trailer/>
+    <resume>
+        <position>0.000000</position>
+        <total>0.000000</total>
+    </resume>
+    <dateadded>2013-01-04 23:56:45</dateadded>
+</episodedetails>

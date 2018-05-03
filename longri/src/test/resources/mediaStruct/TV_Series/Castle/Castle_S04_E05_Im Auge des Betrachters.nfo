@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2017-11-17 13:59:18 - tinyMediaManager 2.9.5 -->
+<episodedetails>
+    <title>Im Auge des Betrachters</title>
+    <showtitle>Castle</showtitle>
+    <rating>7.7</rating>
+    <votes>123</votes>
+    <season>4</season>
+    <episode>5</episode>
+    <uniqueid>4159844</uniqueid>
+    <displayseason>-1</displayseason>
+    <displayepisode>-1</displayepisode>
+    <plot>Während der Eröffnungsfeier einer Ausstellung wird der Direktor des Museums ermordet aufgefunden - Bryan Hayes wurde an einem Ausstellungsstück aufgespießt. Die Ermittlungen ergeben, dass Hayes besorgt war, dass das Kunstobjekt "Faust des Kapitalismus" gestohlen werden könnte. Und tatsächlich: Die Skulptur ist verschwunden. Um den Fall zu lösen, tauchen Beckett und Castle in die Welt der Kunst und Meisterdiebe ein ...</plot>
+    <thumb></thumb>
+    <mpaa>TV-14</mpaa>
+    <playcount>0</playcount>
+    <lastplayed></lastplayed>
+    <watched>false</watched>
+    <credits>Shalisha Francis</credits>
+    <director>John Terlesky</director>
+    <aired>2011-10-17</aired>
+    <premiered>2011-10-17</premiered>
+    <studio>ABC (US)</studio>
+    <source>UNKNOWN</source>
+    <actor>
+        <name>Kristin Lehman</name>
+    </actor>
+    <actor>
+        <name>Jessica Tuck</name>
+    </actor>
+    <actor>
+        <name>Davi Hunt</name>
+    </actor>
+    <actor>
+        <name>Michael Dorn</name>
+    </actor>
+    <actor>
+        <name>Aasha Davis</name>
+    </actor>
+    <actor>
+        <name>Jessica Lundy</name>
+    </actor>
+    <actor>
+        <name>James Read</name>
+    </actor>
+    <actor>
+        <name>Benjamin Ciaramello</name>
+    </actor>
+    <fileinfo>
+        <streamdetails>
+            <video>
+                <codec>h264</codec>
+                <aspect>1.33</aspect>
+                <width>720</width>
+                <height>576</height>
+                <durationinseconds>2472</durationinseconds>
+            </video>
+            <audio>
+                <codec>AAC</codec>
+                <language>deu</language>
+                <channels>2</channels>
+            </audio>
+            <audio>
+                <codec>AC3</codec>
+                <language>deu</language>
+                <channels>2</channels>
+            </audio>
+        </streamdetails>
+    </fileinfo>
+    <epbookmark>0.000000</epbookmark>
+    <year>0</year>
+    <top250>0</top250>
+    <outline/>
+    <tagline/>
+    <runtime>41</runtime>
+    <id/>
+    <set/>
+    <status/>
+    <code/>
+    <trailer/>
+    <resume>
+        <position>0.000000</position>
+        <total>0.000000</total>
+    </resume>
+    <dateadded>2013-01-05 02:26:57</dateadded>
+</episodedetails>

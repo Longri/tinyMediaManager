@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2017-11-17 13:59:13 - tinyMediaManager 2.9.5 -->
+<episodedetails>
+    <title>Helden und Bösewichter</title>
+    <showtitle>Castle</showtitle>
+    <rating>7.9</rating>
+    <votes>124</votes>
+    <season>4</season>
+    <episode>2</episode>
+    <uniqueid>4146617</uniqueid>
+    <displayseason>-1</displayseason>
+    <displayepisode>-1</displayepisode>
+    <plot>Ein Krimineller, der in einer Seitenstraße versucht, eine Frau zu vergewaltigen, wird Opfer eines brutalen Mordes: Der Täter schlägt dem Mann mit einem Schwert die Hand ab und zerteilt ihn anschließend der Länge nach. Beckett und Castle übernehmen den ungewöhnlichen Fall und finden sich in einer Welt von Möchtegern-Superhelden wieder. Auch privat ist in Castles Leben so einiges los: Alexis schockiert ihren Vater mit der Neuigkeit, dass sie in Kalifornien studieren möchte ...</plot>
+    <thumb></thumb>
+    <mpaa>TV-14</mpaa>
+    <playcount>0</playcount>
+    <lastplayed></lastplayed>
+    <watched>false</watched>
+    <credits>David Amann</credits>
+    <credits>Andrew W. Marlowe</credits>
+    <director>Jeff Bleckner</director>
+    <aired>2011-09-26</aired>
+    <premiered>2011-09-26</premiered>
+    <studio>ABC (US)</studio>
+    <source>UNKNOWN</source>
+    <actor>
+        <name>Valerie Azlynn</name>
+    </actor>
+    <actor>
+        <name>Kenneth Mitchell</name>
+    </actor>
+    <actor>
+        <name>Hank Harris</name>
+    </actor>
+    <actor>
+        <name>Jamie McShane</name>
+    </actor>
+    <actor>
+        <name>Eric Tiede</name>
+    </actor>
+    <actor>
+        <name>Maura Soden</name>
+    </actor>
+    <actor>
+        <name>Michelle van der Water</name>
+    </actor>
+    <fileinfo>
+        <streamdetails>
+            <video>
+                <codec>h264</codec>
+                <aspect>1.33</aspect>
+                <width>720</width>
+                <height>576</height>
+                <durationinseconds>2458</durationinseconds>
+            </video>
+            <audio>
+                <codec>AAC</codec>
+                <language>deu</language>
+                <channels>2</channels>
+            </audio>
+            <audio>
+                <codec>AC3</codec>
+                <language>deu</language>
+                <channels>2</channels>
+            </audio>
+        </streamdetails>
+    </fileinfo>
+    <epbookmark>0.000000</epbookmark>
+    <year>0</year>
+    <top250>0</top250>
+    <outline/>
+    <tagline/>
+    <runtime>40</runtime>
+    <id/>
+    <set/>
+    <status/>
+    <code/>
+    <trailer/>
+    <resume>
+        <position>0.000000</position>
+        <total>0.000000</total>
+    </resume>
+    <dateadded>2013-01-04 21:32:22</dateadded>
+</episodedetails>

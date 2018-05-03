@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- created on 2017-11-17 13:59:12 - tinyMediaManager 2.9.5 -->
+<episodedetails>
+    <title>Neuanfang</title>
+    <showtitle>Castle</showtitle>
+    <rating>7.8</rating>
+    <votes>127</votes>
+    <season>4</season>
+    <episode>1</episode>
+    <uniqueid>4122129</uniqueid>
+    <displayseason>-1</displayseason>
+    <displayepisode>-1</displayepisode>
+    <plot>Nach dem Mordanschlag auf Beckett während Captain Montgomerys Beerdigung warten ihre Kollegen vergeblich darauf, dass sie sich bei ihnen meldet. Erst drei Monate später kehrt sie ins Revier zurück. Castle ist mittlerweile nicht mehr für die Polizei tätig, da er es zu Differenzen zwischen ihm und dem neuen Captain Victoria Gates gekommen ist. Nachdem Beckett eine Schießprüfung ablegen muss um ihre Waffe zurückzuerlangen, soll sie den Mord an einem Promigirl aufklären ...</plot>
+    <thumb></thumb>
+    <mpaa>TV-14</mpaa>
+    <playcount>0</playcount>
+    <lastplayed></lastplayed>
+    <watched>false</watched>
+    <credits>Andrew W. Marlowe</credits>
+    <director>Rob Bowman</director>
+    <aired>2011-09-19</aired>
+    <premiered>2011-09-19</premiered>
+    <studio>ABC (US)</studio>
+    <source>UNKNOWN</source>
+    <actor>
+        <name>Geoff Pierson</name>
+    </actor>
+    <actor>
+        <name>Michael Dorn</name>
+    </actor>
+    <actor>
+        <name>Victor Webster</name>
+    </actor>
+    <actor>
+        <name>Scott Paulin</name>
+    </actor>
+    <actor>
+        <name>John M. Jackson</name>
+    </actor>
+    <actor>
+        <name>Larry Anderson</name>
+    </actor>
+    <actor>
+        <name>Valerie Azlynn</name>
+    </actor>
+    <fileinfo>
+        <streamdetails>
+            <video>
+                <codec>h264</codec>
+                <aspect>1.33</aspect>
+                <width>720</width>
+                <height>576</height>
+                <durationinseconds>2466</durationinseconds>
+            </video>
+            <audio>
+                <codec>AAC</codec>
+                <language>deu</language>
+                <channels>2</channels>
+            </audio>
+            <audio>
+                <codec>AC3</codec>
+                <language>deu</language>
+                <channels>2</channels>
+            </audio>
+        </streamdetails>
+    </fileinfo>
+    <epbookmark>0.000000</epbookmark>
+    <year>0</year>
+    <top250>0</top250>
+    <outline/>
+    <tagline/>
+    <runtime>41</runtime>
+    <id/>
+    <set/>
+    <status/>
+    <code/>
+    <trailer/>
+    <resume>
+        <position>0.000000</position>
+        <total>0.000000</total>
+    </resume>
+    <dateadded>2013-01-05 01:12:11</dateadded>
+</episodedetails>
