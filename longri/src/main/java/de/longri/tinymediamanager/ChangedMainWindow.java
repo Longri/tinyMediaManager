@@ -33,11 +33,13 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StringBuilder;
 
 /**
@@ -90,7 +92,7 @@ public class ChangedMainWindow extends MainWindow {
 
   }
 
-  private void extractFromServer() {
+  void extractFromServer() {
 
     //check if DataSource set
     List<String> movieSource = Movie_Settings.getMovieDataSource();
@@ -110,43 +112,52 @@ public class ChangedMainWindow extends MainWindow {
     }
   }
 
-  private FileHandle extractTargetPath(List<String> movieSource, List<String> tvShowSource) {
+   FileHandle extractTargetPath(List<String> movieSource, List<String> tvShowSource) {
 
     FileHandle combinedMovie = getCombinedPath(movieSource);
     FileHandle combinedTvShow = getCombinedPath(tvShowSource);
 
-    return null;
+    List<String> source = new ArrayList<>();
+    source.add(combinedMovie.path());
+    source.add(combinedTvShow.path());
+
+    return getCombinedPath(source);
   }
 
-  private FileHandle getCombinedPath(List<String> source) {
-    String[][] arr =  new String[][]{{}};
+  FileHandle getCombinedPath(List<String> source) {
+    Array<String[]> arr = new Array<>();
 
-    int idx = 0;
     int minLength = Integer.MAX_VALUE;
     for (String path : source) {
-      arr[idx] = path.split(File.separator);
-      minLength = Integer.min(minLength, arr[idx].length);
-      idx++;
+      path = path.replace("\\", "/");
+      String[] pathArray = path.split("/");
+      arr.add(pathArray);
+      minLength = Integer.min(minLength, pathArray.length);
     }
 
     int lastEqualsIndex = -1;
     for (int i = 0; i < minLength; i++) {
       if (lastEqualsIndex >= 0)
         break;
-      for (int j = 0; j < arr.length - 1; j++) {
-        if (!arr[j][i].equals(arr[j + 1][i])) {
-          lastEqualsIndex = i - 1;
+      for (int j = 0; j < arr.size - 1; j++) {
+        if (!arr.get(j)[i].equals(arr.get(j + 1)[i])) {
+          lastEqualsIndex = i;
           break;
         }
       }
     }
 
+    if (lastEqualsIndex == -1)
+      lastEqualsIndex = minLength;
+
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < lastEqualsIndex; i++) {
-      sb.append(arr[0][i]);
+      sb.append(arr.get(0)[i]).append('/');
     }
 
-    return Gdx.files.absolute(sb.toString());
+    FileHandle path = Gdx.files.absolute(sb.toString());
+
+    return path;
   }
 
 }
