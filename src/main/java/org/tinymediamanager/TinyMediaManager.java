@@ -449,6 +449,9 @@ public class TinyMediaManager {
        *           the exception
        */
       private void setLookAndFeel() throws Exception {
+
+        //TODO Longri get Style Property
+
         // get font settings
         String fontFamily = Globals.settings.getFontFamily();
         try {
