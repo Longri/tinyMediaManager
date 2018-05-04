@@ -40,17 +40,20 @@ import javax.swing.table.TableModel;
 
 /**
  * The Class ZebraTable. This JTable displays the content with alternating colors
- * 
+ *
  * @author Manuel Laggner
  */
 public class ZebraJTable extends JTable {
   private static final long             serialVersionUID = -5461344983450088208L;
-  private static final Color            EVEN_ROW_COLOR   = new Color(241, 245, 250);
-  private static final Color            TABLE_GRID_COLOR = new Color(0xd9d9d9);
+  //  private static final Color            EVEN_ROW_COLOR   = new Color(241, 245, 250);
+  //  private static final Color            TABLE_GRID_COLOR = new Color(0xd9d9d9);
+  private static final Color            FIRST_ROW_COLOR  = new Color(0, 0, 0);
+  private static final Color            EVEN_ROW_COLOR   = new Color(30, 30, 30);
+  private static final Color            TABLE_GRID_COLOR = new Color(200, 200, 200);
   private static final CellRendererPane CELL_RENDER_PANE = new CellRendererPane();
 
-  private ArrayList<TableColumn>        indexedColumns   = new ArrayList<>();
-  private Map<Object, TableColumn>      hiddenColumns    = new HashMap<>();
+  private ArrayList<TableColumn>   indexedColumns = new ArrayList<>();
+  private Map<Object, TableColumn> hiddenColumns  = new HashMap<>();
 
   public ZebraJTable() {
     super();
@@ -92,8 +95,7 @@ public class ZebraJTable extends JTable {
     return new JTableHeader(getColumnModel()) {
       private static final long serialVersionUID = -7676154270682107643L;
 
-      @Override
-      protected void paintComponent(Graphics g) {
+      @Override protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         // if this JTableHEader is parented in a JViewport, then paint the table header background to the right of the last column if neccessary.
         JViewport viewport = (JViewport) table.getParent();
@@ -117,8 +119,7 @@ public class ZebraJTable extends JTable {
     CELL_RENDER_PANE.paintComponent(g, component, null, x, 0, width, table.getTableHeader().getHeight(), true);
   }
 
-  @Override
-  public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+  @Override public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
     Component component = super.prepareRenderer(renderer, row, column);
     // if the rendere is a JComponent and the given row isn't part of a
     // selection, make the renderer non-opaque so that striped rows show
@@ -164,8 +165,8 @@ public class ZebraJTable extends JTable {
   }
 
   private static class StripedViewport extends JViewport {
-    private static final long serialVersionUID = 7213871940348239879L;
-    private final JTable      fTable;
+    private static final long   serialVersionUID = 7213871940348239879L;
+    private final        JTable fTable;
 
     private StripedViewport(JTable table) {
       fTable = table;
@@ -184,15 +185,13 @@ public class ZebraJTable extends JTable {
 
     private PropertyChangeListener createTableColumnWidthListener() {
       return new PropertyChangeListener() {
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+        @Override public void propertyChange(PropertyChangeEvent evt) {
           repaint();
         }
       };
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
+    @Override protected void paintComponent(Graphics g) {
       paintStripedBackground(g);
       paintVerticalGridLines(g);
       super.paintComponent(g);
@@ -222,15 +221,14 @@ public class ZebraJTable extends JTable {
       g.translate(0, viewPosition.y);
     }
 
-    @Override
-    public void setViewPosition(Point p) {
+    @Override public void setViewPosition(Point p) {
       super.setViewPosition(p);
       repaint();
     }
 
     private Color getRowColor(int row) {
       // return row % 2 == 0 ? EVEN_ROW_COLOR : getBackground();
-      return row % 2 == 0 ? EVEN_ROW_COLOR : Color.WHITE;
+      return row % 2 == 0 ? EVEN_ROW_COLOR : FIRST_ROW_COLOR;
     }
 
     private void paintVerticalGridLines(Graphics g) {
@@ -266,8 +264,7 @@ public class ZebraJTable extends JTable {
     return new JComponent() {
       private static final long serialVersionUID = -6612112068796852330L;
 
-      @Override
-      protected void paintComponent(Graphics g) {
+      @Override protected void paintComponent(Graphics g) {
         paintHeader(g, table, 0, getWidth());
       }
     };

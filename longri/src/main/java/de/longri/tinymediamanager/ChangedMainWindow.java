@@ -15,6 +15,8 @@
  */
 package de.longri.tinymediamanager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
@@ -42,16 +44,18 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StringBuilder;
 
+import ch.qos.logback.classic.Level;
+
 /**
  * Created by Longri on 03.05.2018.
  */
 public class ChangedMainWindow extends MainWindow {
 
-  private static final String SERVER_PATH_PROPERTY = "longri.server.path";
-
-  private static final ResourceBundle BUNDLE          = ResourceBundle.getBundle("messages", new UTF8Control());
-  private              MovieSettings  Movie_Settings  = MovieModuleManager.MOVIE_SETTINGS;
-  private              TvShowSettings TvShow_Settings = TvShowModuleManager.SETTINGS;
+  private final static Logger         log                  = LoggerFactory.getLogger(ChangedMainWindow.class);
+  private static final String         SERVER_PATH_PROPERTY = "longri.server.path";
+  private static final ResourceBundle BUNDLE               = ResourceBundle.getBundle("messages", new UTF8Control());
+  private              MovieSettings  Movie_Settings       = MovieModuleManager.MOVIE_SETTINGS;
+  private              TvShowSettings TvShow_Settings      = TvShowModuleManager.SETTINGS;
 
   /**
    * Create the application.
@@ -60,7 +64,6 @@ public class ChangedMainWindow extends MainWindow {
    */
   public ChangedMainWindow(String name) {
     super(name);
-
     JMenuBar menuBar = getJMenuBar();
 
     JMenu tools = menuBar.getMenu(3);//tools menu
@@ -72,9 +75,6 @@ public class ChangedMainWindow extends MainWindow {
     tools.add(tmmExtractFromServer);
     tmmExtractFromServer.addActionListener(new ActionListener() {
       @Override public void actionPerformed(ActionEvent arg0) {
-        //                JDialog logDialog = new LogDialog();
-        //                logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-        //                logDialog.setVisible(true);
         extractFromServer();
       }
     });
@@ -84,12 +84,34 @@ public class ChangedMainWindow extends MainWindow {
     tools.add(tmmWriteBackToServer);
     tmmWriteBackToServer.addActionListener(new ActionListener() {
       @Override public void actionPerformed(ActionEvent arg0) {
-        JDialog logDialog = new LogDialog();
-        logDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
-        logDialog.setVisible(true);
+        writeBackToServer();
       }
     });
 
+  }
+
+  private void writeBackToServer() {
+    //check if DataSource set
+    List<String> movieSource = Movie_Settings.getMovieDataSource();
+    List<String> tvShowSource = TvShow_Settings.getTvShowDataSource();
+
+    if (movieSource.isEmpty() || tvShowSource.isEmpty()) {
+      throw new NullPointerException("Media Source must not be null");
+    }
+
+    FileHandle source = extractTargetPath(movieSource, tvShowSource);
+   FileHandle target;
+    String path = TmmProperties.getInstance().getProperty(SERVER_PATH_PROPERTY);
+    Path file = TmmUIHelper.selectDirectory("Select Server Path", path); //$NON-NLS-1$
+    if (file != null && Files.isDirectory(file)) {
+      TmmProperties.getInstance().putProperty(SERVER_PATH_PROPERTY, file.toAbsolutePath().toString());
+      target = Gdx.files.absolute(file.toAbsolutePath().toString());
+
+      log.info("Write back from :{} to Server: {}", source.path(), target.path());
+      JDialog xtractDialog = new WriteBackDialog(source, target);
+      xtractDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+      xtractDialog.setVisible(true);
+    }
   }
 
   void extractFromServer() {
@@ -103,16 +125,21 @@ public class ChangedMainWindow extends MainWindow {
     }
 
     FileHandle target = extractTargetPath(movieSource, tvShowSource);
-
+    FileHandle source;
     String path = TmmProperties.getInstance().getProperty(SERVER_PATH_PROPERTY);
     Path file = TmmUIHelper.selectDirectory("Select Server Path", path); //$NON-NLS-1$
     if (file != null && Files.isDirectory(file)) {
-      //      settings.addMovieDataSources(file.toAbsolutePath().toString());
       TmmProperties.getInstance().putProperty(SERVER_PATH_PROPERTY, file.toAbsolutePath().toString());
+      source = Gdx.files.absolute(file.toAbsolutePath().toString());
+
+      log.info("Extract from Server:{} to {}", source.path(), target.path());
+      JDialog xtractDialog = new ExtractDialog(source, target);
+      xtractDialog.setLocationRelativeTo(MainWindow.getActiveInstance());
+      xtractDialog.setVisible(true);
     }
   }
 
-   FileHandle extractTargetPath(List<String> movieSource, List<String> tvShowSource) {
+  FileHandle extractTargetPath(List<String> movieSource, List<String> tvShowSource) {
 
     FileHandle combinedMovie = getCombinedPath(movieSource);
     FileHandle combinedTvShow = getCombinedPath(tvShowSource);

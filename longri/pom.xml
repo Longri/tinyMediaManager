@@ -30,6 +30,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.jtattoo</groupId>
+            <artifactId>JTattoo</artifactId>
+            <version>1.6.7</version>
+        </dependency>
+        <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx</artifactId>
             <version>1.9.8</version>

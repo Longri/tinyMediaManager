@@ -78,14 +78,22 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import de.longri.tinymediamanager.ChangedMainWindow;
 
+import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
+
 /**
  * Created by Longri on 03.05.2018.
  */
 public class Launcher {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TinyMediaManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(Launcher.class);
+
+  private static final boolean DARK = true;
 
   static {
     Gdx.files = new LwjglFiles();
+    System.setProperty("tmm.consoleloglevel", "DEBUG");
+
+    LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+
   }
 
   /**
@@ -94,6 +102,7 @@ public class Launcher {
    * @param args the arguments
    */
   public static void main(String[] args) {
+
     // should we change the log level for the console?
     setConsoleLogLevel();
 
@@ -223,7 +232,14 @@ public class Launcher {
           Toolkit tk = Toolkit.getDefaultToolkit();
           tk.addAWTEventListener(TmmWindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
           if (!GraphicsEnvironment.isHeadless()) {
-            setLookAndFeel();
+
+            if (DARK) {
+              setLookAndFeelDark();
+            }
+            else {
+              setLookAndFeel();
+            }
+
           }
           doStartupTasks();
 
@@ -418,6 +434,9 @@ public class Launcher {
           shutdownLogger();
           System.exit(1);
         }
+        if (LoggerFactory.getILoggerFactory().getLogger("ROOT") instanceof ch.qos.logback.classic.Logger) {
+          ((ch.qos.logback.classic.Logger) LoggerFactory.getILoggerFactory().getLogger("ROOT")).setLevel(Level.TRACE);
+        }
       }
 
       /**
@@ -499,6 +518,65 @@ public class Launcher {
 
         // Install the look and feel
         UIManager.setLookAndFeel(laf);
+      }
+
+      /**
+       * Sets the look and feel.
+       *
+       * @throws Exception
+       *           the exception
+       */
+      private void setLookAndFeelDark() throws Exception {
+        // get font settings
+        String fontFamily = Globals.settings.getFontFamily();
+        try {
+          // sanity check
+          fontFamily = Font.decode(fontFamily).getFamily();
+        }
+        catch (Exception e) {
+          fontFamily = "Dialog";
+        }
+
+        int fontSize = Globals.settings.getFontSize();
+        if (fontSize < 12) {
+          fontSize = 12;
+        }
+
+        String fontString = fontFamily + " " + fontSize;
+
+        // Get the native look and feel class name
+        // String laf = UIManager.getSystemLookAndFeelClassName();
+        Properties props = new Properties();
+        props.setProperty("controlTextFont", fontString);
+        props.setProperty("systemTextFont", fontString);
+        props.setProperty("userTextFont", fontString);
+        props.setProperty("menuTextFont", fontString);
+        // props.setProperty("windowTitleFont", "Dialog bold 20");
+
+        fontSize = Math.round((float) (fontSize * 0.833));
+        fontString = fontFamily + " " + fontSize;
+
+        props.setProperty("subTextFont", fontString);
+        props.setProperty("backgroundColor", "0 0 0");
+        props.setProperty("menuBackgroundColor", "0 0 0");
+        props.setProperty("controlBackgroundColor", "0 0 0");
+        props.setProperty("menuColorLight", "0 0 0");
+        props.setProperty("menuColorDark", "0 0 0");
+        props.setProperty("toolbarColorLight", "0 0 0");
+        props.setProperty("toolbarColorDark", "0 0 0");
+        props.setProperty("tooltipBackgroundColor", "30 30 30");
+        props.put("windowDecoration", "system");
+        props.put("logoString", "");
+
+
+        props.setProperty("selectionForegroundColor", "200 30 30");
+        props.setProperty("selectionBackgroundColor", "30 30 200");
+
+
+
+        UIManager.setLookAndFeel("com.jtattoo.plaf.hifi.HiFiLookAndFeel");
+        props.setProperty("textAntiAliasing", "on");
+        HiFiLookAndFeel.setTheme(props);
       }
 
       /**

@@ -7,43 +7,49 @@ import com.badlogic.gdx.files.FileHandle;
  */
 public class ExtractMediaStruct extends AbstractCopy {
 
-    String[] mediaFiles = new String[]{"mkv", "avi", "ts", "mp4", "vob"};
-    String[] ignoreFiles = new String[]{"m2ts","rar"};
+  String[] mediaFiles      = new String[] { "mkv", "avi", "ts", "mp4", "vob", "mov" };
+  String[] ignoreFiles     = new String[] { "m2ts", "rar", "ds_store", "bup", "ifo", "sub", "idx" };
+  String[] ignoreFileNames = new String[] {};
 
+  public ExtractMediaStruct(FileHandle source, FileHandle target) {
+    super(target, source);
+    if (!this.dummy.exists())
+      throw new RuntimeException("Dummy file must exist");
+  }
 
-    public ExtractMediaStruct(FileHandle source, FileHandle target) {
-        super(target, source);
-        if (!this.dummy.exists()) throw new RuntimeException("Dummy file must exist");
+  @Override protected boolean ifMediaFile(FileHandle file) {
+    final String fileExt = file.extension().toLowerCase();
+    for (String ext : mediaFiles) {
+      if (fileExt.equals(ext))
+        return true;
+    }
+    return false;
+  }
+
+  @Override protected boolean ifIgnorre(FileHandle file) {
+    final String nameWithoutExt = file.nameWithoutExtension().toLowerCase();
+    final String ext = file.extension().toLowerCase();
+    for (String ignore : ignoreFileNames) {
+      if (nameWithoutExt.equals(ignore))
+        return true;
     }
 
+    if (ext.startsWith("r")) {
+      try {
+        int i = Integer.parseInt(ext.replaceAll("r", ""));
+        //is integer/ like rar archive
+        log.debug("ignore RAR");
+        return true;
+      }
+      catch (NumberFormatException e) {
 
-    @Override
-    protected boolean ifMediaFile(FileHandle file) {
-        for (String ext : mediaFiles) {
-            if (file.extension().toLowerCase().equals(ext)) return true;
-        }
-        return false;
+      }
     }
 
-
-    @Override
-    protected boolean ifIgnorre(FileHandle file) {
-        String ext=file.extension();
-
-        if(ext.toLowerCase().startsWith("r")){
-            try {
-                int i=Integer.parseInt(ext.replaceAll("r",""));
-                //is integer/ like rar archive
-                log.debug("ignore RAR");
-                return true;
-            } catch (NumberFormatException e) {
-
-            }
-        }
-
-        for (String ignore : ignoreFiles) {
-            if (ext.toLowerCase().equals(ignore)) return true;
-        }
-        return false;
+    for (String ignore : ignoreFiles) {
+      if (ext.equals(ignore))
+        return true;
     }
+    return false;
+  }
 }
