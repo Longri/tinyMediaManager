@@ -24,27 +24,27 @@ import java.util.Properties;
 /**
  * Created by Longri on 05.05.18.
  */
-public class DefaultStyle extends AbstractStyle {
+public class DefaultLookAndFeel implements LookAndFeel {
 
 
-    public DefaultStyle() {
+    public DefaultLookAndFeel() {
         super();
-        fontSize = 12;
-        fontFamily = "Dialog";
     }
+
 
     @Override
     public void setLookAndFeel() throws Exception {
 
-        Globals.settings.setStyle(this);
-
+        String fontFamily = Globals.settings.getStyle().getFontFamily();
         try {
             // sanity check
             fontFamily = Font.decode(fontFamily).getFamily();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             fontFamily = "Dialog";
         }
 
+        int fontSize = Globals.settings.getStyle().getFontSize();
         if (fontSize < 12) {
             fontSize = 12;
         }
@@ -81,5 +81,10 @@ public class DefaultStyle extends AbstractStyle {
 
         // Install the look and feel
         UIManager.setLookAndFeel(laf);
+    }
+
+    @Override
+    public String getName() {
+        return "Default";
     }
 }

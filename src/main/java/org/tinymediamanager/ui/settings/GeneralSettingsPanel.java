@@ -88,6 +88,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER             = LoggerFactory.getLogger(GeneralSettingsPanel.class);
   private static final Integer[]      DEFAULT_FONT_SIZES = { 12, 14, 16, 18, 20, 22, 24, 26, 28 };
+  private static final String[]       DEFAULT_LOOK_AND_FEELS = {"Default", "Dark"};
   private static final Pattern        MEMORY_PATTERN     = Pattern.compile("-Xmx([0-9]*)(.)");
 
   private Settings                    settings           = Settings.getInstance();
@@ -106,6 +107,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JTextPane                   tpFontHint;
   private JComboBox                   cbFontSize;
   private JComboBox                   cbFontFamily;
+  private JComboBox                   cbLookAndFeel;
   private JCheckBox                   chckbxDeleteTrash;
   private JSlider                     sliderMemory;
   private JTextPane                   tpMemoryHint;
@@ -188,8 +190,24 @@ public class GeneralSettingsPanel extends ScrollablePanel {
 
     panelUI.add(cbFontSize, "12, 4, fill, default");
 
+    JLabel lblLookAndFeel = new JLabel(BUNDLE.getString("Settings.lookandfeel")); //$NON-NLS-1$
+    panelUI.add(lblLookAndFeel, "10, 6, right, default");
+
+    cbLookAndFeel = new JComboBox(DEFAULT_LOOK_AND_FEELS);
+    cbLookAndFeel.setSelectedItem(Globals.settings.getStyle().getLookAndFeel().getName());
+    index = cbLookAndFeel.getSelectedIndex();
+    if (index < 0) {
+      cbLookAndFeel.setSelectedIndex(0);
+    }
+
+    panelUI.add(cbLookAndFeel, "12, 6, fill, default");
+
+
+
+
+
     JPanel panel = new JPanel();
-    panelUI.add(panel, "2, 6, 5, 1, fill, fill");
+    panelUI.add(panel, "2, 8, 5, 1, fill, fill");
     panel.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu"), FormSpecs.RELATED_GAP_COLSPEC,
             ColumnSpec.decode("default:grow"), },
@@ -217,7 +235,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     tpFontHint.setOpaque(false);
     TmmFontHelper.changeFont(tpFontHint, 0.833);
     tpFontHint.setText(BUNDLE.getString("Settings.fonts.hint")); //$NON-NLS-1$
-    panelUI.add(tpFontHint, "10, 6, 5, 1");
+    panelUI.add(tpFontHint, "10, 8, 5, 1");
 
     lblLanguageHint = new JLabel("");
     TmmFontHelper.changeFont(lblLanguageHint, Font.BOLD);

@@ -15,26 +15,23 @@
  */
 package org.tinymediamanager.ui.style;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 
 /**
  * Created by Longri on 05.05.18.
  */
-public abstract class AbstractStyle extends AbstractModelObject {
+public class Style extends AbstractModelObject {
 
-     StyleType type;
-    int fontSize;
-    String fontFamily;
+    Logger LOGGER = LoggerFactory.getLogger(Style.class);
 
-    public AbstractStyle() {
+    LookAndFeel lookAndFeel = new DefaultLookAndFeel();
+    int fontSize = 12;
+    String fontFamily = "Dialog";
+
+    public Style() {
     }
-
-    /**
-     * Sets the look and feel.
-     *
-     * @throws Exception the exception
-     */
-    public abstract void setLookAndFeel() throws Exception;
 
     public int getFontSize() {
         return fontSize;
@@ -54,5 +51,13 @@ public abstract class AbstractStyle extends AbstractModelObject {
         String oldValue = this.fontFamily;
         this.fontFamily = newValue;
         firePropertyChange("fontFamily", oldValue, newValue);
+    }
+
+    public void setLookAndFeel() throws Exception {
+        lookAndFeel.setLookAndFeel();
+    }
+
+    public LookAndFeel getLookAndFeel() {
+        return lookAndFeel;
     }
 }

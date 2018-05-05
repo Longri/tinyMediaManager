@@ -66,8 +66,7 @@ import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.http.ProxySettings;
 import org.tinymediamanager.scraper.util.StrgUtils;
-import org.tinymediamanager.ui.style.AbstractStyle;
-import org.tinymediamanager.ui.style.DefaultStyle;
+import org.tinymediamanager.ui.style.Style;
 
 /**
  * The Class Settings - holding all settings for tmm.
@@ -159,7 +158,7 @@ public class Settings extends AbstractModelObject {
   private boolean                     upnpShareLibrary            = false;
   private boolean                     upnpRemotePlay              = false;
 
-  private AbstractStyle               style                       = null;
+  private Style style                       = null;
 
   /**
    * Instantiates a new settings.
@@ -182,7 +181,7 @@ public class Settings extends AbstractModelObject {
     movieScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
     tvShowScraperMetadataConfig = new TvShowScraperMetadataConfig();
     tvShowScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
-    style = new DefaultStyle();
+    style = new Style();
     style.addPropertyChangeListener(propertyChangeListener);
   }
 
@@ -273,6 +272,9 @@ public class Settings extends AbstractModelObject {
           Settings.instance.writeDefaultSettings();
         }
         Settings.instance.clearDirty();
+
+        //after load settings, activate loaded style
+        Settings.instance.style.setLookAndFeel();
       }
       catch (Exception e) {
         LOGGER.error("getInstance", e);
@@ -1147,12 +1149,12 @@ public class Settings extends AbstractModelObject {
     return deleteTrashOnExit;
   }
 
-  public AbstractStyle getStyle() {
+  public Style getStyle() {
       return style;
   }
 
-  public void setStyle(AbstractStyle newValue) {
-    AbstractStyle oldValue = style;
+  public void setStyle(Style newValue) {
+    Style oldValue = style;
     oldValue.removePropertyChangeListener(propertyChangeListener);
 
     style = newValue;
