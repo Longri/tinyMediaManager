@@ -1,4 +1,4 @@
-Upcoming version
+Version 2.9.11
 =======================
 x added Ł and ł in the ascii replacer
 x changed tvdb API to version 2
