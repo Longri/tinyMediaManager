@@ -274,7 +274,7 @@ public class Settings extends AbstractModelObject {
         Settings.instance.clearDirty();
 
         //after load settings, activate loaded style
-        Settings.instance.style.setLookAndFeel();
+        Settings.instance.style.setLookAndFeel(null);
       }
       catch (Exception e) {
         LOGGER.error("getInstance", e);

@@ -76,6 +76,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.sun.jna.Platform;
+import org.tinymediamanager.ui.style.LookAndFeel;
 
 /**
  * The Class GeneralSettingsPanel.
@@ -88,7 +89,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
   private static final Logger         LOGGER             = LoggerFactory.getLogger(GeneralSettingsPanel.class);
   private static final Integer[]      DEFAULT_FONT_SIZES = { 12, 14, 16, 18, 20, 22, 24, 26, 28 };
-  private static final String[]       DEFAULT_LOOK_AND_FEELS = {"Default", "Dark"};
+  private static final String[]       DEFAULT_LOOK_AND_FEELS = LookAndFeel.NAMES;
   private static final Pattern        MEMORY_PATTERN     = Pattern.compile("-Xmx([0-9]*)(.)");
 
   private Settings                    settings           = Settings.getInstance();
@@ -403,6 +404,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     cbLanguage.addItemListener(listener);
     cbFontSize.addItemListener(listener);
     cbFontFamily.addItemListener(listener);
+    cbLookAndFeel.addItemListener(listener);
   }
 
   /**
@@ -427,6 +429,12 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     String fontFamily = (String) cbFontFamily.getSelectedItem();
     if (!fontFamily.equals(Globals.settings.getStyle().getFontFamily())) {
       Globals.settings.getStyle().setFontFamily(fontFamily);
+      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
+    }
+
+    String lookAndFeel = (String) cbLookAndFeel.getSelectedItem();
+    if (!lookAndFeel.equals(Globals.settings.getStyle().getLookAndFeel().getName())) {
+      Globals.settings.getStyle().setLookAndFeel(this, lookAndFeel);
       lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
     }
   }

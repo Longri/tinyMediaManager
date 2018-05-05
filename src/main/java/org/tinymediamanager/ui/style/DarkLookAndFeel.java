@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.style;
 
+import com.jtattoo.plaf.noire.NoireLookAndFeel;
 import org.tinymediamanager.Globals;
 
 import javax.swing.*;
@@ -24,10 +25,10 @@ import java.util.Properties;
 /**
  * Created by Longri on 05.05.18.
  */
-public class NoireLookAndFeel implements LookAndFeel {
+public class DarkLookAndFeel implements LookAndFeel {
 
 
-    public NoireLookAndFeel() {
+    public DarkLookAndFeel() {
         super();
     }
 
@@ -75,15 +76,17 @@ public class NoireLookAndFeel implements LookAndFeel {
         props.put("logoString", "");
 
         // Get the look and feel class name
-        com.jtattoo.plaf.noire.NoireLookAndFeel.setTheme(props);
+        com.jtattoo.plaf.noire.NoireLookAndFeel.setCurrentTheme(props);
+
         String noire = "com.jtattoo.plaf.noire.NoireLookAndFeel";
 
         // Install the look and feel
         UIManager.setLookAndFeel(noire);
+
     }
 
     @Override
     public String getName() {
-        return "Dark";
+        return NAMES[1];
     }
 }

@@ -57,14 +57,8 @@
                 -DartifactId=JTattoo -Dversion=1.6.12.1 -->
             <groupId>org.tinymediamanager</groupId>
             <artifactId>JTattoo</artifactId>
-            <version>1.6.12.1</version>
+            <version>1.6.12.2</version>
         </dependency>
-        <dependency>
-            <groupId>com.jtattoo</groupId>
-            <artifactId>JTattoo</artifactId>
-            <version>1.6.7</version>
-        </dependency>
-
         <!-- our plugins - all provided for dependency resolution -->
         <dependency>
             <groupId>org.tinymediamanager.plugins</groupId>

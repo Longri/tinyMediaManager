@@ -85,6 +85,6 @@ public class DefaultLookAndFeel implements LookAndFeel {
 
     @Override
     public String getName() {
-        return "Default";
+        return NAMES[0];
     }
 }
