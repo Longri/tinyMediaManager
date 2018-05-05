@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.components;
 
+import org.tinymediamanager.Globals;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -45,10 +47,10 @@ import javax.swing.table.TableModel;
  */
 public class ZebraJTable extends JTable {
   private static final long             serialVersionUID = -5461344983450088208L;
-  private static final Color            EVEN_ROW_COLOR   = new Color(241, 245, 250);
-  private static final Color            TABLE_GRID_COLOR = new Color(0xd9d9d9);
   private static final CellRendererPane CELL_RENDER_PANE = new CellRendererPane();
 
+
+  private String                        lastAppliedStyle  = "";
   private ArrayList<TableColumn>        indexedColumns   = new ArrayList<>();
   private Map<Object, TableColumn>      hiddenColumns    = new HashMap<>();
 
@@ -62,6 +64,16 @@ public class ZebraJTable extends JTable {
     init();
   }
 
+  @Override
+  public void updateUI() {
+    super.updateUI();
+    if(lastAppliedStyle!=null && !lastAppliedStyle.equals(Globals.settings.getStyle().getLookAndFeelName())) {
+      lastAppliedStyle = Globals.settings.getStyle().getLookAndFeelName();
+      setSelectionBackground(Globals.settings.getStyle().getTableSelectionBackground());
+      setSelectionForeground(Globals.settings.getStyle().getTableSelectionForeground());
+    }
+  }
+
   private void init() {
     setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
     setTableHeader(createTableHeader());
@@ -69,7 +81,7 @@ public class ZebraJTable extends JTable {
     setOpaque(false);
 
     setNewFontSize(getFont().getSize());
-    setGridColor(TABLE_GRID_COLOR);
+    setGridColor(Globals.settings.getStyle().getTableGridColor());
     setIntercellSpacing(new Dimension(0, 0));
     // turn off grid painting as we'll handle this manually in order to paint
     // grid lines over the entire viewport.
@@ -230,7 +242,7 @@ public class ZebraJTable extends JTable {
 
     private Color getRowColor(int row) {
       // return row % 2 == 0 ? EVEN_ROW_COLOR : getBackground();
-      return row % 2 == 0 ? EVEN_ROW_COLOR : Color.WHITE;
+      return row % 2 == 0 ? Globals.settings.getStyle().getRowColor1() : Globals.settings.getStyle().getRowColor2();
     }
 
     private void paintVerticalGridLines(Graphics g) {
@@ -243,7 +255,7 @@ public class ZebraJTable extends JTable {
         x += column.getWidth();
 
         if (x >= 0) {
-          g.setColor(TABLE_GRID_COLOR);
+          g.setColor(Globals.settings.getStyle().getTableGridColor());
           // draw the grid line (not sure what the -1 is for, but BasicTableUI
           // also does it.
           g.drawLine(x - 1, g.getClipBounds().y, x - 1, getHeight());

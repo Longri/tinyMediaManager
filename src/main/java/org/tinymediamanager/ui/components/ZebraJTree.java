@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.components;
 
+import org.tinymediamanager.Globals;
+
 import java.awt.Color;
 import java.awt.Rectangle;
 
@@ -312,7 +314,7 @@ public class ZebraJTree extends JTree {
    */
   private void updateZebraColors() {
     if ((rowColors[0] = getBackground()) == null) {
-      rowColors[0] = rowColors[1] = java.awt.Color.white;
+      rowColors[0] = rowColors[1] = Globals.settings.getStyle().getRowColor1();
       return;
     }
 
@@ -331,7 +333,7 @@ public class ZebraJTree extends JTree {
 
     // rowColors[1] = java.awt.Color.getHSBColor((selHSB[1] == 0.0 || selHSB[2] == 0.0) ? bgHSB[0] : selHSB[0], 0.1f * selHSB[1] + 0.9f * bgHSB[1],
     // bgHSB[2] + ((bgHSB[2] < 0.5f) ? 0.05f : -0.05f));
-    rowColors[1] = new Color(241, 245, 250);
+    rowColors[1] = Globals.settings.getStyle().getRowColor2();
   }
 
 }

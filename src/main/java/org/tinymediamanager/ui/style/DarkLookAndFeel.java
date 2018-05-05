@@ -64,14 +64,15 @@ public class DarkLookAndFeel implements LookAndFeel {
         fontString = fontFamily + " " + fontSize;
 
         props.setProperty("subTextFont", fontString);
-        props.setProperty("backgroundColor", "237 237 237");
-        props.setProperty("menuBackgroundColor", "237 237 237");
-        props.setProperty("controlBackgroundColor", "237 237 237");
-        props.setProperty("menuColorLight", "237 237 237");
-        props.setProperty("menuColorDark", "237 237 237");
-        props.setProperty("toolbarColorLight", "237 237 237");
-        props.setProperty("toolbarColorDark", "237 237 237");
+        props.setProperty("backgroundColor", "30 30 30");
+        props.setProperty("menuBackgroundColor", "30 30 30");
+        props.setProperty("controlBackgroundColor", "30 30 30");
+        props.setProperty("menuColorLight", "30 30 30");
+        props.setProperty("menuColorDark", "30 30 30");
+        props.setProperty("toolbarColorLight", "30 30 30");
+        props.setProperty("toolbarColorDark", "30 30 30");
         props.setProperty("tooltipBackgroundColor", "255 255 255");
+
         props.put("windowDecoration", "system");
         props.put("logoString", "");
 
@@ -88,5 +89,30 @@ public class DarkLookAndFeel implements LookAndFeel {
     @Override
     public String getName() {
         return NAMES[1];
+    }
+
+    @Override
+    public Color getRowColor1() {
+        return Color.black;
+    }
+
+    @Override
+    public Color getRowColor2() {
+        return new Color(70, 70, 70);
+    }
+
+    @Override
+    public Color getTableGridColor() {
+        return new Color(100, 100, 100);
+    }
+
+    @Override
+    public Color getTableSelectionForeground() {
+        return new Color(255, 200, 200);
+    }
+
+    @Override
+    public Color getTableSelectionBackground() {
+        return new Color(60, 10, 10);
     }
 }

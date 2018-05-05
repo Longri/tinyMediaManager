@@ -39,8 +39,7 @@ public class DefaultLookAndFeel implements LookAndFeel {
         try {
             // sanity check
             fontFamily = Font.decode(fontFamily).getFamily();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fontFamily = "Dialog";
         }
 
@@ -72,6 +71,8 @@ public class DefaultLookAndFeel implements LookAndFeel {
         props.setProperty("toolbarColorLight", "237 237 237");
         props.setProperty("toolbarColorDark", "237 237 237");
         props.setProperty("tooltipBackgroundColor", "255 255 255");
+
+
         props.put("windowDecoration", "system");
         props.put("logoString", "");
 
@@ -86,5 +87,30 @@ public class DefaultLookAndFeel implements LookAndFeel {
     @Override
     public String getName() {
         return NAMES[0];
+    }
+
+    @Override
+    public Color getRowColor1() {
+        return java.awt.Color.white;
+    }
+
+    @Override
+    public Color getRowColor2() {
+        return new Color(241, 245, 250);
+    }
+
+    @Override
+    public Color getTableGridColor() {
+        return new Color(0xd9d9d9);
+    }
+
+    @Override
+    public Color getTableSelectionForeground() {
+        return new Color(0, 0, 0);
+    }
+
+    @Override
+    public Color getTableSelectionBackground() {
+        return new Color(194, 208, 243);
     }
 }

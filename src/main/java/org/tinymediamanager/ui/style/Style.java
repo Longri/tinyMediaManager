@@ -112,4 +112,24 @@ public class Style extends AbstractModelObject {
             e.printStackTrace();
         }
     }
+
+    public Color getRowColor1() {
+        return lookAndFeel.getRowColor1();
+    }
+
+    public Color getRowColor2() {
+        return lookAndFeel.getRowColor2();
+    }
+
+    public Color getTableGridColor() {
+        return lookAndFeel.getTableGridColor();
+    }
+
+    public Color getTableSelectionBackground() {
+        return lookAndFeel.getTableSelectionBackground();
+    }
+
+    public Color getTableSelectionForeground() {
+        return lookAndFeel.getTableSelectionForeground();
+    }
 }
