@@ -16,6 +16,7 @@
 package org.tinymediamanager.ui.style;
 
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.ui.IconManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -82,6 +83,9 @@ public class DefaultLookAndFeel implements LookAndFeel {
 
         // Install the look and feel
         UIManager.setLookAndFeel(laf);
+
+        //reload images
+        IconManager.reloadImages();
     }
 
     @Override

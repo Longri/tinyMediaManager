@@ -7,7 +7,7 @@ import java.awt.*;
  */
 public interface LookAndFeel {
 
-    public final static String[] NAMES = new String[]{"Default","Dark"};
+    public final static String[] NAMES = new String[]{"Default", "Dark"};
 
     void setLookAndFeel() throws Exception;
 

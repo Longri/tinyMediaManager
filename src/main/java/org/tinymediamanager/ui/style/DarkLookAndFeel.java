@@ -17,6 +17,7 @@ package org.tinymediamanager.ui.style;
 
 import com.jtattoo.plaf.noire.NoireLookAndFeel;
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.ui.IconManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -84,6 +85,8 @@ public class DarkLookAndFeel implements LookAndFeel {
         // Install the look and feel
         UIManager.setLookAndFeel(noire);
 
+        //reload images
+        IconManager.reloadImages();
     }
 
     @Override
