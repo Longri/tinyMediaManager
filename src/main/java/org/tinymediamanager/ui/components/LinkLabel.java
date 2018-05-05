@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.ui.components;
 
+import org.tinymediamanager.Globals;
+
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
@@ -39,6 +41,7 @@ public class LinkLabel extends JLabel {
    * The normal text set by the user.
    */
   private String            text;
+  private String            lastAppliedStyle  = "";
 
   /**
    * Creates a new LinkLabel with the given text.
@@ -55,6 +58,16 @@ public class LinkLabel extends JLabel {
     }
   }
 
+  @Override
+  public void updateUI() {
+    super.updateUI();
+    if(lastAppliedStyle!=null && !lastAppliedStyle.equals(Globals.settings.getStyle().getLookAndFeelName())) {
+      lastAppliedStyle = Globals.settings.getStyle().getLookAndFeelName();
+      //set Text new
+      setText(this.text);
+    }
+  }
+
   /**
    * Sets the text of the label.
    * 
@@ -64,7 +77,8 @@ public class LinkLabel extends JLabel {
   @Override
   public void setText(String text) {
     if (Desktop.isDesktopSupported()) {
-      super.setText("<html><font color=\"#0000CF\"><u>" + text + "</u></font></html>"); //$NON-NLS-1$ //$NON-NLS-2$
+      String linkColorString = Globals.settings.getStyle().getLinkColorString();
+      super.setText("<html><font color=\"" + linkColorString + "\"><u>" + text + "</u></font></html>"); //$NON-NLS-1$ //$NON-NLS-2$
     }
     else {
       super.setText(text);

@@ -132,4 +132,8 @@ public class Style extends AbstractModelObject {
     public Color getTableSelectionForeground() {
         return lookAndFeel.getTableSelectionForeground();
     }
+
+    public String getLinkColorString() {
+        return lookAndFeel.getLinkColorString();
+    }
 }

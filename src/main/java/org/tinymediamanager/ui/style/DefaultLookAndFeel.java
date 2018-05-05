@@ -113,4 +113,9 @@ public class DefaultLookAndFeel implements LookAndFeel {
     public Color getTableSelectionBackground() {
         return new Color(194, 208, 243);
     }
+
+    @Override
+    public String getLinkColorString() {
+        return "#0000CF";
+    }
 }

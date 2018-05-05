@@ -22,4 +22,6 @@ public interface LookAndFeel {
     Color getTableSelectionForeground();
 
     Color getTableSelectionBackground();
+
+    String getLinkColorString();
 }

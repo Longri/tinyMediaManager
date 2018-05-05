@@ -115,4 +115,9 @@ public class DarkLookAndFeel implements LookAndFeel {
     public Color getTableSelectionBackground() {
         return new Color(60, 10, 10);
     }
+
+    @Override
+    public String getLinkColorString() {
+        return "#6097bb"; //96 151 187
+    }
 }
