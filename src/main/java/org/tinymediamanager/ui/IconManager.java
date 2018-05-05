@@ -79,7 +79,11 @@ public class IconManager {
     URL file = null;
 
     if(!lookAndFeelName.equals("default")){
-      file = IconManager.class.getResource("/images/" + lookAndFeelName + "/ui/" + name);
+      //from resource lib
+//      file = IconManager.class.getResource("/images/" + lookAndFeelName + "/ui/" + name);
+
+      // from included resources
+      file = IconManager.class.getResource("/org/tinymediamanager/ui/images/" + lookAndFeelName + "/ui/" + name);
       if(file==null){
         LOGGER.debug("Cant load LookAndFeel ({}) depended image: {}! Use default",lookAndFeelName,name);
         file = IconManager.class.getResource("/images/ui/" + name);
