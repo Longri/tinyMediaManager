@@ -165,7 +165,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     panelUI.add(lblFontFamily, "10, 2, right, default");
     GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
     cbFontFamily = new JComboBox(env.getAvailableFontFamilyNames());
-    cbFontFamily.setSelectedItem(Globals.settings.getFontFamily());
+    cbFontFamily.setSelectedItem(Globals.settings.getStyle().getFontFamily());
     int index = cbFontFamily.getSelectedIndex();
     if (index < 0) {
       cbFontFamily.setSelectedItem("Dialog");
@@ -180,7 +180,7 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     panelUI.add(lblFontSize, "10, 4, right, default");
 
     cbFontSize = new JComboBox(DEFAULT_FONT_SIZES);
-    cbFontSize.setSelectedItem(Globals.settings.getFontSize());
+    cbFontSize.setSelectedItem(Globals.settings.getStyle().getFontSize());
     index = cbFontSize.getSelectedIndex();
     if (index < 0) {
       cbFontSize.setSelectedIndex(0);
@@ -401,14 +401,14 @@ public class GeneralSettingsPanel extends ScrollablePanel {
 
     // fonts
     Integer fontSize = (Integer) cbFontSize.getSelectedItem();
-    if (fontSize != Globals.settings.getFontSize()) {
-      Globals.settings.setFontSize(fontSize);
+    if (fontSize != Globals.settings.getStyle().getFontSize()) {
+      Globals.settings.getStyle().setFontSize(fontSize);
       lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
     }
 
     String fontFamily = (String) cbFontFamily.getSelectedItem();
-    if (!fontFamily.equals(Globals.settings.getFontFamily())) {
-      Globals.settings.setFontFamily(fontFamily);
+    if (!fontFamily.equals(Globals.settings.getStyle().getFontFamily())) {
+      Globals.settings.getStyle().setFontFamily(fontFamily);
       lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
     }
   }

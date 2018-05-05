@@ -41,11 +41,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.ELProperty;
@@ -220,7 +218,7 @@ public class TinyMediaManager {
           Toolkit tk = Toolkit.getDefaultToolkit();
           tk.addAWTEventListener(TmmWindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
           if (!GraphicsEnvironment.isHeadless()) {
-            setLookAndFeel();
+            Globals.settings.getStyle().setLookAndFeel();
           }
           doStartupTasks();
 
@@ -442,64 +440,6 @@ public class TinyMediaManager {
         LOGGER.debug("Startup (" + progress + "%) " + text);
       }
 
-      /**
-       * Sets the look and feel.
-       * 
-       * @throws Exception
-       *           the exception
-       */
-      private void setLookAndFeel() throws Exception {
-
-        //TODO Longri get Style Property
-
-        // get font settings
-        String fontFamily = Globals.settings.getFontFamily();
-        try {
-          // sanity check
-          fontFamily = Font.decode(fontFamily).getFamily();
-        }
-        catch (Exception e) {
-          fontFamily = "Dialog";
-        }
-
-        int fontSize = Globals.settings.getFontSize();
-        if (fontSize < 12) {
-          fontSize = 12;
-        }
-
-        String fontString = fontFamily + " " + fontSize;
-
-        // Get the native look and feel class name
-        // String laf = UIManager.getSystemLookAndFeelClassName();
-        Properties props = new Properties();
-        props.setProperty("controlTextFont", fontString);
-        props.setProperty("systemTextFont", fontString);
-        props.setProperty("userTextFont", fontString);
-        props.setProperty("menuTextFont", fontString);
-        // props.setProperty("windowTitleFont", "Dialog bold 20");
-
-        fontSize = Math.round((float) (fontSize * 0.833));
-        fontString = fontFamily + " " + fontSize;
-
-        props.setProperty("subTextFont", fontString);
-        props.setProperty("backgroundColor", "237 237 237");
-        props.setProperty("menuBackgroundColor", "237 237 237");
-        props.setProperty("controlBackgroundColor", "237 237 237");
-        props.setProperty("menuColorLight", "237 237 237");
-        props.setProperty("menuColorDark", "237 237 237");
-        props.setProperty("toolbarColorLight", "237 237 237");
-        props.setProperty("toolbarColorDark", "237 237 237");
-        props.setProperty("tooltipBackgroundColor", "255 255 255");
-        props.put("windowDecoration", "system");
-        props.put("logoString", "");
-
-        // Get the look and feel class name
-        com.jtattoo.plaf.luna.LunaLookAndFeel.setTheme(props);
-        String laf = "com.jtattoo.plaf.luna.LunaLookAndFeel";
-
-        // Install the look and feel
-        UIManager.setLookAndFeel(laf);
-      }
 
       /**
        * Does some tasks at startup

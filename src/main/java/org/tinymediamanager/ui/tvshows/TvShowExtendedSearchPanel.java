@@ -74,7 +74,7 @@ public class TvShowExtendedSearchPanel extends RoundedPanel {
    * @wbp.nls.resourceBundle messages
    */
   private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());               //$NON-NLS-1$
-  private static final float           FONT_SIZE        = Math.round(Globals.settings.getFontSize() * 0.916);
+  private static final float           FONT_SIZE        = Math.round(Globals.settings.getStyle().getFontSize() * 0.916);
   private static final SmallCheckBoxUI CHECKBOX_UI      = AbstractLookAndFeel.getTheme() != null ? new SmallCheckBoxUI() : null; // hint for WBPro
 
   private TvShowTreeModel              tvShowTreeModel;

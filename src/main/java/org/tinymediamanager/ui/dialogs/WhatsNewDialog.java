@@ -64,7 +64,7 @@ public class WhatsNewDialog extends TmmDialog {
       JScrollPane scrollPane = new JScrollPane();
       getContentPane().add(scrollPane, BorderLayout.CENTER);
       JTextPane textPane = new JTextPane();
-      textPane.setFont(new Font(Font.MONOSPACED, Font.PLAIN, Globals.settings.getFontSize() + 1));
+      textPane.setFont(new Font(Font.MONOSPACED, Font.PLAIN, Globals.settings.getStyle().getFontSize() + 1));
       scrollPane.setViewportView(textPane);
 
       textPane.setContentType("text/html");

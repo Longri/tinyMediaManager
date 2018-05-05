@@ -66,6 +66,8 @@ import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.http.ProxySettings;
 import org.tinymediamanager.scraper.util.StrgUtils;
+import org.tinymediamanager.ui.style.AbstractStyle;
+import org.tinymediamanager.ui.style.DefaultStyle;
 
 /**
  * The Class Settings - holding all settings for tmm.
@@ -148,9 +150,6 @@ public class Settings extends AbstractModelObject {
   private String                      language;
   private String                      mediaPlayer                 = "";
 
-  private int                         fontSize                    = 12;
-  private String                      fontFamily                  = "Dialog";
-
   private boolean                     deleteTrashOnExit           = false;
 
   private PropertyChangeListener      propertyChangeListener;
@@ -159,6 +158,8 @@ public class Settings extends AbstractModelObject {
 
   private boolean                     upnpShareLibrary            = false;
   private boolean                     upnpRemotePlay              = false;
+
+  private AbstractStyle               style                       = null;
 
   /**
    * Instantiates a new settings.
@@ -181,6 +182,8 @@ public class Settings extends AbstractModelObject {
     movieScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
     tvShowScraperMetadataConfig = new TvShowScraperMetadataConfig();
     tvShowScraperMetadataConfig.addPropertyChangeListener(propertyChangeListener);
+    style = new DefaultStyle();
+    style.addPropertyChangeListener(propertyChangeListener);
   }
 
   public String getSettingsFolder() {
@@ -1134,26 +1137,6 @@ public class Settings extends AbstractModelObject {
     return mediaPlayer;
   }
 
-  public void setFontSize(int newValue) {
-    int oldValue = this.fontSize;
-    this.fontSize = newValue;
-    firePropertyChange("fontSize", oldValue, newValue);
-  }
-
-  public int getFontSize() {
-    return this.fontSize;
-  }
-
-  public void setFontFamily(String newValue) {
-    String oldValue = this.fontFamily;
-    this.fontFamily = newValue;
-    firePropertyChange("fontFamily", oldValue, newValue);
-  }
-
-  public String getFontFamily() {
-    return this.fontFamily;
-  }
-
   public void setDeleteTrashOnExit(boolean newValue) {
     boolean oldValue = deleteTrashOnExit;
     deleteTrashOnExit = newValue;
@@ -1162,5 +1145,19 @@ public class Settings extends AbstractModelObject {
 
   public boolean isDeleteTrashOnExit() {
     return deleteTrashOnExit;
+  }
+
+  public AbstractStyle getStyle() {
+      return style;
+  }
+
+  public void setStyle(AbstractStyle newValue) {
+    AbstractStyle oldValue = style;
+    oldValue.removePropertyChangeListener(propertyChangeListener);
+
+    style = newValue;
+    style.addPropertyChangeListener(propertyChangeListener);
+
+    firePropertyChange("style", oldValue, newValue);
   }
 }
