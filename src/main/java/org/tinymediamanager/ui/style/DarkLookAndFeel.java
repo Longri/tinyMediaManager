@@ -52,8 +52,6 @@ public class DarkLookAndFeel implements LookAndFeel {
 
         String fontString = fontFamily + " " + fontSize;
 
-        // Get the native look and feel class name
-        // String laf = UIManager.getSystemLookAndFeelClassName();
         Properties props = new Properties();
         props.setProperty("controlTextFont", fontString);
         props.setProperty("systemTextFont", fontString);
@@ -72,7 +70,38 @@ public class DarkLookAndFeel implements LookAndFeel {
         props.setProperty("menuColorDark", "30 30 30");
         props.setProperty("toolbarColorLight", "30 30 30");
         props.setProperty("toolbarColorDark", "30 30 30");
-        props.setProperty("tooltipBackgroundColor", "255 255 255");
+        props.setProperty("tooltipBackgroundColor", "30 10 10");
+
+        props.setProperty("buttonForegroundColor", "255 255 200");
+        props.setProperty("buttonBackgroundColor", "0 0 0");
+        props.setProperty("buttonColorLight", "30 30 30");
+        props.setProperty("buttonColorDark", "10 30 30");
+
+
+//        try
+        props.setProperty("tooltipForegroundColor", "255 0 0");
+        props.setProperty("tooltipBackgroundColor", "0 0 255");
+        props.setProperty("tooltipCastShadow", "0 0 255");
+
+        props.setProperty("frameColor", "0 0 0");
+
+
+
+
+
+
+
+
+
+
+
+
+//        value: red green blue. Sample: "255 128 255"
+//        tooltipCastShadow
+
+//        value: on if you want a cast shadow instead of the default shadow.
+//                tooltipBorderSize
+//                tooltipShadowSize
 
         props.put("windowDecoration", "system");
         props.put("logoString", "");
