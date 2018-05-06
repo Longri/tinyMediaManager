@@ -1,5 +1,8 @@
 package org.tinymediamanager.ui.style;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.*;
 
 /**
@@ -7,7 +10,9 @@ import java.awt.*;
  */
 public interface LookAndFeel {
 
-    public final static String[] NAMES = new String[]{"Default", "Dark"};
+    Logger LOGGER = LoggerFactory.getLogger(LookAndFeel.class);
+
+    String[] NAMES = new String[]{"Default", "Dark"};
 
     void setLookAndFeel() throws Exception;
 

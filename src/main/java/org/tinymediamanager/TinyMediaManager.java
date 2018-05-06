@@ -217,9 +217,6 @@ public class TinyMediaManager {
           }
           Toolkit tk = Toolkit.getDefaultToolkit();
           tk.addAWTEventListener(TmmWindowSaver.getInstance(), AWTEvent.WINDOW_EVENT_MASK);
-          if (!GraphicsEnvironment.isHeadless()) {
-            Globals.settings.getStyle().setLookAndFeel(null);
-          }
           doStartupTasks();
 
           // suppress logging messages from betterbeansbinding

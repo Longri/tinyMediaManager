@@ -80,28 +80,9 @@ public class DarkLookAndFeel implements LookAndFeel {
 
 //        try
         props.setProperty("tooltipForegroundColor", "255 0 0");
-        props.setProperty("tooltipBackgroundColor", "0 0 255");
+        props.setProperty("tooltipBackgroundColor", "100 0 0");
         props.setProperty("tooltipCastShadow", "0 0 255");
 
-        props.setProperty("frameColor", "0 0 0");
-
-
-
-
-
-
-
-
-
-
-
-
-//        value: red green blue. Sample: "255 128 255"
-//        tooltipCastShadow
-
-//        value: on if you want a cast shadow instead of the default shadow.
-//                tooltipBorderSize
-//                tooltipShadowSize
 
         props.put("windowDecoration", "system");
         props.put("logoString", "");
@@ -110,6 +91,8 @@ public class DarkLookAndFeel implements LookAndFeel {
         com.jtattoo.plaf.noire.NoireLookAndFeel.setCurrentTheme(props);
 
         String noire = "com.jtattoo.plaf.noire.NoireLookAndFeel";
+
+        LOGGER.debug("Set LookAndFeel => Dark");
 
         // Install the look and feel
         UIManager.setLookAndFeel(noire);

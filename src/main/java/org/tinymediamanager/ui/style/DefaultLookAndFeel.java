@@ -81,6 +81,8 @@ public class DefaultLookAndFeel implements LookAndFeel {
         com.jtattoo.plaf.luna.LunaLookAndFeel.setTheme(props);
         String laf = "com.jtattoo.plaf.luna.LunaLookAndFeel";
 
+        LOGGER.debug("Set LookAndFeel => Dark");
+
         // Install the look and feel
         UIManager.setLookAndFeel(laf);
 

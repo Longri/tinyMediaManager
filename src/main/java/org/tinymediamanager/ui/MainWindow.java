@@ -316,7 +316,6 @@ public class MainWindow extends JFrame {
     }
 
     checkForUpdate();
-    Globals.settings.getStyle().setLookAndFeel(this);
   }
 
   /**

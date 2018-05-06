@@ -64,14 +64,20 @@ public class Style extends AbstractModelObject {
         return lookAndFeelName;
     }
 
-    public void setLookAndFeelName(String newValue) {
+    /**
+     * @param newValue Name for LookAndFeel
+     * @return True if changed
+     */
+    public boolean setLookAndFeelName(String newValue) {
         String oldValue = this.lookAndFeelName;
         this.lookAndFeelName = newValue;
         firePropertyChange("lookAndFeelName", oldValue, newValue);
         if (oldValue.equals(UNKNOWN_STYLE)) {
             // set from Settings loader, so set LookAndFeel
             setLookAndFeel(null, this.lookAndFeelName);
+            return true;
         }
+        return !oldValue.equals(newValue);
     }
 
     public void setLookAndFeel(final Component component) {
@@ -103,7 +109,7 @@ public class Style extends AbstractModelObject {
                 lookAndFeel = new DarkLookAndFeel();
                 break;
         }
-        setLookAndFeelName(lookAndFeel.getName());
+        if (!setLookAndFeelName(lookAndFeel.getName())) return;
         LOGGER.info("Change LookAndFeel to {}", lookAndFeel.getName());
 
         try {

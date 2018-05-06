@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core;
 
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -274,7 +275,8 @@ public class Settings extends AbstractModelObject {
         Settings.instance.clearDirty();
 
         //after load settings, activate loaded style
-        Settings.instance.style.setLookAndFeel(null);
+        if(!GraphicsEnvironment.isHeadless())
+            Settings.instance.style.setLookAndFeel(null);
       }
       catch (Exception e) {
         LOGGER.error("getInstance", e);
