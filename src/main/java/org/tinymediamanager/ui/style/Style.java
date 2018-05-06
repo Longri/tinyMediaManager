@@ -142,4 +142,12 @@ public class Style extends AbstractModelObject {
     public String getLinkColorString() {
         return lookAndFeel.getLinkColorString();
     }
+
+    public Color getFontColor() {
+        return lookAndFeel.getFontColor();
+    }
+
+    public Font getFont() {
+        return lookAndFeel.getFont();
+    }
 }

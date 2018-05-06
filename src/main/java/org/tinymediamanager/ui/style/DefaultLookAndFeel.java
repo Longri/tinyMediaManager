@@ -27,6 +27,8 @@ import java.util.Properties;
  */
 public class DefaultLookAndFeel implements LookAndFeel {
 
+    Font font;
+    Color fontColor;
 
     public DefaultLookAndFeel() {
         super();
@@ -50,6 +52,8 @@ public class DefaultLookAndFeel implements LookAndFeel {
         }
 
         String fontString = fontFamily + " " + fontSize;
+        font = new Font(fontFamily, 0, fontSize);
+        fontColor = new Color(0,0,0);
 
         // Get the native look and feel class name
         // String laf = UIManager.getSystemLookAndFeelClassName();
@@ -123,5 +127,15 @@ public class DefaultLookAndFeel implements LookAndFeel {
     @Override
     public String getLinkColorString() {
         return "#0000CF";
+    }
+
+    @Override
+    public Color getFontColor() {
+        return fontColor;
+    }
+
+    @Override
+    public Font getFont() {
+        return font;
     }
 }

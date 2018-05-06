@@ -28,6 +28,8 @@ import java.util.Properties;
  */
 public class DarkLookAndFeel implements LookAndFeel {
 
+    Font font;
+    Color fontColor;
 
     public DarkLookAndFeel() {
         super();
@@ -51,6 +53,8 @@ public class DarkLookAndFeel implements LookAndFeel {
         }
 
         String fontString = fontFamily + " " + fontSize;
+        font = new Font(fontFamily, 0, fontSize);
+        fontColor = new Color(255,255,255);
 
         Properties props = new Properties();
         props.setProperty("controlTextFont", fontString);
@@ -134,5 +138,15 @@ public class DarkLookAndFeel implements LookAndFeel {
     @Override
     public String getLinkColorString() {
         return "#6097bb"; //96 151 187
+    }
+
+    @Override
+    public Color getFontColor() {
+        return fontColor;
+    }
+
+    @Override
+    public Font getFont() {
+        return font;
     }
 }

@@ -15,8 +15,7 @@
  */
 package org.tinymediamanager.ui.settings;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
@@ -116,6 +115,8 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private JCheckBox                   chckbxAnalytics;
   private JLabel                      lblLanguageHint;
   private JLabel                      lblMemory;
+  private TitledBorder                titledBorder;
+  private String                      lastAppliedStyle  = "";
 
   /**
    * Instantiates a new general settings panel.
@@ -129,7 +130,8 @@ public class GeneralSettingsPanel extends ScrollablePanel {
             FormSpecs.RELATED_GAP_ROWSPEC, }));
 
     JPanel panelUI = new JPanel();
-    panelUI.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.ui"), TitledBorder.LEADING, TitledBorder.TOP, null, null));//$NON-NLS-1$
+    titledBorder = new TitledBorder(null, BUNDLE.getString("Settings.ui"), TitledBorder.LEADING, TitledBorder.TOP, null, null);//$NON-NLS-1$
+    panelUI.setBorder(titledBorder);
     add(panelUI, "2, 2, 3, 1, fill, fill");
     panelUI.setLayout(new FormLayout(
         new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("100dlu"),
@@ -201,9 +203,6 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     }
 
     panelUI.add(cbLookAndFeel, "12, 6, fill, default");
-
-
-
 
 
     JPanel panel = new JPanel();
@@ -400,6 +399,22 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     cbFontSize.addItemListener(listener);
     cbFontFamily.addItemListener(listener);
     cbLookAndFeel.addItemListener(listener);
+
+    setLookAndFeelSettings();
+  }
+
+  @Override
+  public void updateUI() {
+      super.updateUI();
+      if(lastAppliedStyle!=null && !lastAppliedStyle.equals(Globals.settings.getStyle().getLookAndFeelName())) {
+          lastAppliedStyle = Globals.settings.getStyle().getLookAndFeelName();
+          setLookAndFeelSettings();
+      }
+  }
+
+  private void setLookAndFeelSettings(){
+    titledBorder.setTitleColor(Globals.settings.getStyle().getFontColor());
+    titledBorder.setTitleFont(Globals.settings.getStyle().getFont());
   }
 
   /**
