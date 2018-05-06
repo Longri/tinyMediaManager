@@ -115,7 +115,6 @@ public class GeneralSettingsPanel extends ScrollablePanel {
   private LinkLabel                   lblLinkTransifex;
   private JCheckBox                   chckbxAnalytics;
   private JLabel                      lblLanguageHint;
-  private JLabel                      lblFontChangeHint;
   private JLabel                      lblMemory;
 
   /**
@@ -241,10 +240,6 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     lblLanguageHint = new JLabel("");
     TmmFontHelper.changeFont(lblLanguageHint, Font.BOLD);
     panelUI.add(lblLanguageHint, "2, 8, 5, 1");
-
-    lblFontChangeHint = new JLabel("");
-    TmmFontHelper.changeFont(lblFontChangeHint, Font.BOLD);
-    panelUI.add(lblFontChangeHint, "10, 8, 5, 1");
 
     JPanel panelMemory = new JPanel();
     panelMemory.setBorder(new TitledBorder(null, BUNDLE.getString("Settings.memoryborder"), TitledBorder.LEADING, TitledBorder.TOP, null, null)); //$NON-NLS-1$
@@ -423,19 +418,19 @@ public class GeneralSettingsPanel extends ScrollablePanel {
     Integer fontSize = (Integer) cbFontSize.getSelectedItem();
     if (fontSize != Globals.settings.getStyle().getFontSize()) {
       Globals.settings.getStyle().setFontSize(fontSize);
-      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
+      Globals.settings.getStyle().setLookAndFeel(this);
     }
 
     String fontFamily = (String) cbFontFamily.getSelectedItem();
     if (!fontFamily.equals(Globals.settings.getStyle().getFontFamily())) {
       Globals.settings.getStyle().setFontFamily(fontFamily);
-      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
+      Globals.settings.getStyle().setLookAndFeel(this);
     }
 
     String lookAndFeel = (String) cbLookAndFeel.getSelectedItem();
     if (!lookAndFeel.equals(Globals.settings.getStyle().getLookAndFeel().getName())) {
       Globals.settings.getStyle().setLookAndFeel(this, lookAndFeel);
-      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
+      Globals.settings.getStyle().setLookAndFeel(this);
     }
   }
 
